@@ -1,4 +1,4 @@
-<script lang="ts" strictEvents>
+<script lang="ts">
   import debounce from "lodash/debounce";
   import { createEventDispatcher } from "svelte";
   import { onMount } from "svelte";

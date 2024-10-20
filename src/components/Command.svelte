@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { SvelteComponent } from "svelte";
+  import type { SvelteComponent } from "svelte";
 
   import Clipboard from "@app/components/Clipboard.svelte";
 

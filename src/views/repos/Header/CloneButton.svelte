@@ -11,21 +11,22 @@
   import Popover from "@app/components/Popover.svelte";
   import Radio from "@app/components/Radio.svelte";
 
-  export let baseUrl: BaseUrl;
-  export let id: string;
-  export let name: string;
+  let { baseUrl, id, name }: { baseUrl: BaseUrl; id: string; name: string } =
+    $props();
 
-  let radicle: boolean = true;
-
-  $: radCloneUrl = `rad clone ${id}`;
-  $: portFragment =
+  let radicle: boolean = $state(true);
+  let radCloneUrl = $derived(`rad clone ${id}`);
+  let portFragment = $derived(
     baseUrl.scheme === config.nodes.defaultHttpdScheme &&
-    baseUrl.port === config.nodes.defaultHttpdPort
+      baseUrl.port === config.nodes.defaultHttpdPort
       ? ""
-      : `:${baseUrl.port}`;
-  $: gitCloneUrl = `git clone ${baseUrl.scheme}://${
-    baseUrl.hostname
-  }${portFragment}/${parseRepositoryId(id)?.pubkey ?? id}.git ${name}`;
+      : `:${baseUrl.port}`,
+  );
+  let gitCloneUrl = $derived(
+    `git clone ${baseUrl.scheme}://${
+      baseUrl.hostname
+    }${portFragment}/${parseRepositoryId(id)?.pubkey ?? id}.git ${name}`,
+  );
 </script>
 
 <style>
@@ -58,7 +59,7 @@
           <Icon name="logo" />
           Radicle
         </Button>
-        <div class="global-spacer" />
+        <div class="global-spacer"></div>
         <Button
           styleWidth="100%"
           styleBorderRadius="0"

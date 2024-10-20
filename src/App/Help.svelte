@@ -31,7 +31,7 @@
   </div>
 
   {#if !hideShortcuts}
-    <div class="divider" />
+    <div class="divider"></div>
     <div class="item">
       Keyboard shortcuts <KeyHint>?</KeyHint>
     </div>

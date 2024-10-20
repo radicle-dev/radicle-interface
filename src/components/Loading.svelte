@@ -160,10 +160,10 @@
       class:center
       class:margins
       class:condensed>
-      <div class="bounce1" style="" />
+      <div class="bounce1" style=""></div>
       {#if !condensed}
-        <div class="bounce2" />
-        <div class="bounce3" />
+        <div class="bounce2"></div>
+        <div class="bounce3"></div>
       {/if}
     </div>
   </div>

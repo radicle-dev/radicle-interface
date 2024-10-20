@@ -41,8 +41,8 @@ test("modified file", async ({ page }) => {
   ).toBeVisible();
 
   // Diff.
-  await expect(page.getByText("-	# Git test repository")).toBeVisible();
-  await expect(page.getByText("+	Updated readme")).toBeVisible();
+  await expect(page.getByText("# Git test repository")).toBeVisible();
+  await expect(page.getByText("Updated readme")).toBeVisible();
 });
 
 test("created file", async ({ page }) => {

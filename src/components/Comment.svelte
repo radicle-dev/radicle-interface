@@ -51,9 +51,6 @@
     left: -2.5px;
     background-color: var(--color-fill-separator);
   }
-  .icon {
-    color: var(--color-fill-gray);
-  }
   .card-metadata {
     color: var(--color-fill-gray);
     font-size: var(--font-size-small);
@@ -101,10 +98,10 @@
 <div class="card" class:card-empty-body={!body} {id} class:reply={isReply}>
   <div style:position="relative">
     {#if isReply}
-      <div class="reply-dot" />
+      <div class="reply-dot"></div>
     {/if}
     {#if isLastReply}
-      <div class="connector-line" />
+      <div class="connector-line"></div>
     {/if}
     <div class="card-header" class:card-header-no-icon={isReply}>
       <slot class="icon" name="icon" />

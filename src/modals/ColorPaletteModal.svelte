@@ -143,7 +143,8 @@
                   class:unused={!usedColors.includes(color)}
                   title={color}
                   class="color"
-                  style:background-color={`var(${color})`} />
+                  style:background-color={`var(${color})`}>
+                </div>
               </div>
             {/each}
           </div>

@@ -1,4 +1,4 @@
-<script lang="ts" strictEvents>
+<script lang="ts">
   import type { Route } from "@app/lib/router/definitions";
 
   import { createEventDispatcher } from "svelte";
