@@ -4,7 +4,7 @@
   "exclude": ["node_modules/*", "radicle-httpd/*"],
   "compilerOptions": {
     "noEmit": true,
-    "target": "es2021",
+    "target": "es2023",
     "module": "es2022",
     "types": ["vite/client"],
     "sourceMap": true,

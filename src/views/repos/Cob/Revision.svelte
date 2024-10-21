@@ -437,7 +437,7 @@
         {/if}
         {#if response?.commits}
           <div class="commits">
-            {#each response.commits.reverse() as commit}
+            {#each response.commits.toReversed() as commit}
               <div class="commit" style:position="relative">
                 <div class="commit-dot" />
                 <CobCommitTeaser {commit} {baseUrl} {repoId} />

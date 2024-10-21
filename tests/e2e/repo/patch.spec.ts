@@ -117,3 +117,32 @@ test("view file navigation from changes tab", async ({ page }) => {
     `${cobUrl}/tree/8c900d6cb38811e099efb3cbbdbfaba817bcf970/README.md`,
   );
 });
+
+test("commit listing ordering keeping stable on browser navigation", async ({
+  page,
+}) => {
+  await page.goto(`${cobUrl}/patches`);
+  await page
+    .getByRole("link", { name: "Taking another stab at the README" })
+    .click();
+  await page
+    .getByRole("heading", { name: "Taking another stab at the README" })
+    .waitFor();
+
+  async function expectCorrectCommitListing() {
+    const commits = await page.locator(".commit").all();
+    expect(commits).toHaveLength(2);
+    await expect(
+      commits[0].getByText("Rewrite subtitle to README"),
+    ).toBeVisible();
+    await expect(commits[1].getByText("Add more text")).toBeVisible();
+  }
+
+  await expectCorrectCommitListing();
+  await page.getByRole("link", { name: "Rewrite subtitle to README" }).click();
+  await page.goBack();
+  await page
+    .getByRole("heading", { name: "Taking another stab at the README" })
+    .waitFor();
+  await expectCorrectCommitListing();
+});
