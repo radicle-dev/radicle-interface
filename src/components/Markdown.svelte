@@ -137,6 +137,7 @@
     // pointing at the repos /raw endpoint.
     for (const i of container.querySelectorAll("img")) {
       const imagePath = i.getAttribute("src");
+      const imageClass = i.getAttribute("class");
 
       // If the image is an oid embed
       if (imagePath && isCommit(imagePath)) {
@@ -160,7 +161,8 @@
       }
 
       // Make sure the source isn't a URL before trying to fetch it from the repo
-      if (imagePath && !isUrl(imagePath) && !imagePath.startsWith("/twemoji")) {
+      const emoji = imageClass && imageClass === "txt-emoji";
+      if (imagePath && !isUrl(imagePath) && !emoji) {
         i.setAttribute("src", `${rawPath}/${canonicalize(imagePath, path)}`);
       }
     }
@@ -347,6 +349,10 @@
   .markdown :global(img) {
     border-style: none;
     max-width: 100%;
+  }
+
+  .markdown :global(img.txt-emoji) {
+    height: 1rem;
   }
 
   .markdown :global(code) {
