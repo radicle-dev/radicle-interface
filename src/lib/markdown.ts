@@ -89,7 +89,13 @@ export const markdownWithExtensions = new Marked(
   katexMarkedExtension({ throwOnError: false }),
   markedLinkifyIt({}, { fuzzyLink: false }),
   markedFootnote({ refMarkers: true }),
-  markedEmoji({ emojis }),
+  markedEmoji({
+    emojis,
+    renderer: (token: { name: string; emoji: string }) => {
+      const src = token.emoji.codePointAt(0)?.toString(16);
+      return `<img alt="${token.name}" src="/twemoji/${src}.svg" class="txt-emoji">`;
+    },
+  }),
   ((): MarkedExtension => ({
     extensions: [anchorMarkedExtension],
   }))(),

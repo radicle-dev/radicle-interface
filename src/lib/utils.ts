@@ -244,7 +244,7 @@ export function twemoji(
     base: "/",
     folder: "twemoji",
     ext: ".svg",
-    className: `txt-emoji`,
+    className: "txt-emoji",
   });
 }
 
