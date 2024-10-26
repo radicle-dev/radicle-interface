@@ -5,6 +5,7 @@
     storeCodeFont,
     storeTheme,
     theme,
+    followSystemTheme,
   } from "@app/lib/appearance";
 
   import Button from "@app/components/Button.svelte";
@@ -43,7 +44,9 @@
         <Button
           ariaLabel="Light Mode"
           styleBorderRadius="0"
-          variant={$theme === "light" ? "selected" : "not-selected"}
+          variant={!$followSystemTheme && $theme === "light"
+            ? "selected"
+            : "not-selected"}
           on:click={() => storeTheme("light")}>
           <Icon name="sun" />
         </Button>
@@ -51,9 +54,19 @@
         <Button
           ariaLabel="Dark Mode"
           styleBorderRadius="0"
-          variant={$theme === "dark" ? "selected" : "not-selected"}
+          variant={!$followSystemTheme && $theme === "dark"
+            ? "selected"
+            : "not-selected"}
           on:click={() => storeTheme("dark")}>
           <Icon name="moon" />
+        </Button>
+        <div class="global-spacer" />
+        <Button
+          ariaLabel="System Theme"
+          styleBorderRadius="0"
+          variant={$followSystemTheme ? "selected" : "not-selected"}
+          on:click={() => storeTheme("system")}>
+          <Icon name="device" />
         </Button>
       </Radio>
     </div>

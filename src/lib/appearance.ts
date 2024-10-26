@@ -1,6 +1,7 @@
 import { writable } from "svelte/store";
 
 export type Theme = "dark" | "light";
+export const followSystemTheme = writable<boolean>(shouldFollowSystemTheme());
 export const theme = writable<Theme>(loadTheme());
 
 export type CodeFont = "jetbrains" | "system";
@@ -29,24 +30,42 @@ function loadCodeFont(): CodeFont {
   }
 }
 
+function shouldFollowSystemTheme(): boolean {
+  const storedTheme = localStorage ? localStorage.getItem("theme") : null;
+  if (storedTheme === null) {
+    return true; // default to following the system theme
+  } else {
+    return storedTheme === "system";
+  }
+}
+
 function loadTheme(): Theme {
   const { matches } = window.matchMedia("(prefers-color-scheme: dark)");
   const storedTheme = localStorage ? localStorage.getItem("theme") : null;
 
-  if (storedTheme === null) {
+  if (storedTheme === null || storedTheme === "system") {
     return matches ? "dark" : "light";
   } else {
     return storedTheme as Theme;
   }
 }
 
-export function storeTheme(newTheme: Theme): void {
-  theme.set(newTheme);
+export function storeTheme(newTheme: Theme | "system"): void {
+  followSystemTheme.set(newTheme === "system" ? true : false);
   if (localStorage) {
     localStorage.setItem("theme", newTheme);
   } else {
     console.warn(
       "localStorage isn't available, not able to persist the selected theme without it.",
+    );
+  }
+  if (newTheme !== "system") {
+    // update the theme to newTheme
+    theme.set(newTheme);
+  } else {
+    // update the theme to the current system theme
+    theme.set(
+      window.matchMedia("(prefers-color-scheme: dark)") ? "dark" : "light",
     );
   }
 }
