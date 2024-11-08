@@ -158,7 +158,7 @@ fn blob_response(
         MIMES
             .binary_search_by(|(k, _)| k.cmp(&ext))
             .map(|k| MIMES[k].1)
-            .unwrap_or("text; charset=utf-8")
+            .unwrap_or("text/plain; charset=utf-8")
     } else {
         "application/octet-stream"
     };
