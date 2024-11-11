@@ -24,6 +24,13 @@
 
   const activeRouteStore = router.activeRouteStore;
 
+  window
+    .matchMedia("(prefers-color-scheme: dark)")
+    .addEventListener("change", ({ matches }) => {
+      theme.set(matches ? "dark" : "light");
+      followSystemTheme.set(true);
+    });
+
   void router.loadFromLocation();
 
   $: document.documentElement.setAttribute("data-codefont", $codeFont);
