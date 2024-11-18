@@ -28,7 +28,7 @@
 <div class="avatar-alias">
   <Link
     styleHoverState
-    style="display: flex; gap: 5px; align-items: center;"
+    style="display: flex; gap: 0.375rem; align-items: center;"
     route={{ resource: "users", did: nodeId, baseUrl }}>
     <Avatar variant="small" {nodeId} />
     {#if alias}

@@ -48,9 +48,7 @@
   <div class="header">Assignees</div>
   <div class="body">
     {#each assignees as { id, alias }}
-      <div>
-        <NodeId {baseUrl} nodeId={id} {alias} />
-      </div>
+      <NodeId {baseUrl} nodeId={id} {alias} />
     {:else}
       <div class="txt-missing no-assignees">No assignees</div>
     {/each}
