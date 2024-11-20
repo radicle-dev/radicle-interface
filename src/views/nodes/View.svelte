@@ -2,6 +2,8 @@
   import type { BaseUrl, Node, NodeStats } from "@http-client";
 
   import * as router from "@app/lib/router";
+  import dompurify from "dompurify";
+  import { markdown } from "@app/lib/markdown";
   import { baseUrlToString } from "@app/lib/utils";
   import { fetchRepoInfos } from "@app/components/RepoCard";
   import { handleError } from "@app/views/nodes/error";
@@ -42,6 +44,12 @@
   $: background = node.bannerUrl
     ? `url("${node.bannerUrl}")`
     : `url("/images/default-seed-header.png")`;
+
+  function render(content: string): string {
+    return dompurify.sanitize(
+      markdown({ linkify: true, emojis: true }).parse(content) as string,
+    );
+  }
 </script>
 
 <style>
@@ -274,7 +282,7 @@
         </div>
         {#if node.description}
           <div class="description txt-small">
-            {node.description}
+            {@html render(node.description)}
           </div>
         {:else}
           <div
@@ -398,7 +406,7 @@
               style:gap="0.25rem">
               {#if node.description}
                 <div class="description txt-small">
-                  {node.description}
+                  {@html render(node.description)}
                 </div>
               {/if}
             </div>

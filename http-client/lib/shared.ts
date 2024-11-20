@@ -87,8 +87,8 @@ export const configSchema = object({
     pinned: object({
       repositories: array(string()),
     }),
-    imageUrl: string().optional(),
-    name: string().optional(),
+    bannerUrl: string().optional(),
+    avatarUrl: string().optional(),
     description: string().optional(),
   }),
   node: nodeConfigSchema,

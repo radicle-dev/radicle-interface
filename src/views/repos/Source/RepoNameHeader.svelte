@@ -2,7 +2,7 @@
   import type { BaseUrl, Repo } from "@http-client";
 
   import dompurify from "dompurify";
-  import { markdownWithExtensions } from "@app/lib/markdown";
+  import { markdown } from "@app/lib/markdown";
   import { twemoji } from "@app/lib/utils";
 
   import Badge from "@app/components/Badge.svelte";
@@ -18,7 +18,7 @@
 
   function render(content: string): string {
     return dompurify.sanitize(
-      markdownWithExtensions.parseInline(content) as string,
+      markdown({ linkify: true, emojis: true }).parseInline(content) as string,
     );
   }
 

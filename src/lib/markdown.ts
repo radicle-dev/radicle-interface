@@ -2,15 +2,15 @@ import type { MarkedExtension, Tokens } from "marked";
 import type { Route } from "@app/lib/router";
 
 import dompurify from "dompurify";
+import footnoteMarkedExtension from "marked-footnote";
 import katexMarkedExtension from "marked-katex-extension";
-import markedFootnote from "marked-footnote";
-import markedLinkifyIt from "marked-linkify-it";
+import linkifyMarkedExtension from "marked-linkify-it";
 import { Marked, Renderer as BaseRenderer } from "marked";
 import { markedEmoji } from "marked-emoji";
 
 import emojis from "@app/lib/emojis";
-import { routeToPath } from "@app/lib/router";
 import { canonicalize, isUrl } from "@app/lib/utils";
+import { routeToPath } from "@app/lib/router";
 
 dompurify.setConfig({
   // eslint-disable-next-line @typescript-eslint/naming-convention
@@ -18,25 +18,6 @@ dompurify.setConfig({
   // eslint-disable-next-line @typescript-eslint/naming-convention
   FORBID_TAGS: ["textarea", "style"],
 });
-
-// Converts self closing anchor tags into empty anchor tags, to avoid erratic wrapping behaviour
-// e.g. <a name="test"/> -> <a name="test"></a>
-const anchorMarkedExtension = {
-  name: "sanitizedAnchor",
-  level: "block",
-  start: (src: string) => src.match(/<a name="([\w]+)"\/>/)?.index,
-  tokenizer(src: string) {
-    const match = src.match(/^<a name="([\w]+)"\/>/);
-    if (match) {
-      return {
-        type: "sanitizedAnchor",
-        raw: match[0],
-        text: match[1].trim(),
-      };
-    }
-  },
-  renderer: (token: Tokens.Generic): string => `<a name="${token.text}"></a>`,
-};
 
 export class Renderer extends BaseRenderer {
   #route: Route;
@@ -83,20 +64,64 @@ export class Renderer extends BaseRenderer {
   }
 }
 
-export default new Marked();
+interface MarkedOptions {
+  /** Converts double colon separated strings like `:emoji:` into img tags. */
+  emojis?: boolean;
+  /** Enable footnotes support. */
+  footnotes?: boolean;
+  /** Detect links and convert them into anchor tags. */
+  linkify?: boolean;
+  /** Enable katex support. */
+  katex?: boolean;
+}
 
-export const markdownWithExtensions = new Marked(
-  katexMarkedExtension({ throwOnError: false }),
-  markedLinkifyIt({}, { fuzzyLink: false }),
-  markedFootnote({ refMarkers: true }),
-  markedEmoji({
-    emojis,
-    renderer: (token: { name: string; emoji: string }) => {
-      const src = token.emoji.codePointAt(0)?.toString(16);
-      return `<img alt="${token.name}" src="/twemoji/${src}.svg" class="txt-emoji">`;
+// Converts self closing anchor tags into empty anchor tags, to avoid erratic wrapping behaviour
+// e.g. <a name="test"/> -> <a name="test"></a>
+const anchorExtension: MarkedExtension = {
+  extensions: [
+    {
+      name: "sanitizedAnchor",
+      level: "block",
+      start: (src: string) => src.match(/<a name="([\w]+)"\/>/)?.index,
+      tokenizer(src: string) {
+        const match = src.match(/^<a name="([\w]+)"\/>/);
+        if (match) {
+          return {
+            type: "sanitizedAnchor",
+            raw: match[0],
+            text: match[1].trim(),
+          };
+        }
+      },
+      renderer: (token: Tokens.Generic): string =>
+        `<a name="${token.text}"></a>`,
     },
-  }),
-  ((): MarkedExtension => ({
-    extensions: [anchorMarkedExtension],
-  }))(),
-);
+  ],
+};
+
+// Converts double colon separated strings like `:emoji:` into img tags.
+const emojiExtension = markedEmoji({
+  emojis,
+  renderer: (token: { name: string; emoji: string }) => {
+    const src = token.emoji.codePointAt(0)?.toString(16);
+    return `<img alt="${token.name}" src="/twemoji/${src}.svg" class="txt-emoji">`;
+  },
+});
+
+const footnoteExtension = footnoteMarkedExtension({ refMarkers: true });
+const linkifyExtension = linkifyMarkedExtension({}, { fuzzyLink: false });
+const katexExtension = katexMarkedExtension({ throwOnError: false });
+
+export function markdown(options: MarkedOptions): Marked {
+  return new Marked(
+    // Default extensions to always include.
+    ...[anchorExtension],
+    // Optional extensions to include according to use case.
+    ...[
+      ...(options.emojis ? [emojiExtension] : []),
+      ...(options.footnotes ? [footnoteExtension] : []),
+      ...(options.katex ? [katexExtension] : []),
+      ...(options.linkify ? [linkifyExtension] : []),
+    ],
+  );
+}

@@ -6,12 +6,12 @@
   import { afterUpdate } from "svelte";
   import { toDom } from "hast-util-to-dom";
 
-  import * as modal from "@app/lib/modal";
   import * as router from "@app/lib/router";
+  import * as modal from "@app/lib/modal";
   import ErrorModal from "@app/modals/ErrorModal.svelte";
-  import { Renderer, markdownWithExtensions } from "@app/lib/markdown";
   import { activeUnloadedRouteStore } from "@app/lib/router";
   import { highlight } from "@app/lib/syntax";
+  import { mimes } from "@app/lib/file";
   import {
     isUrl,
     twemoji,
@@ -19,7 +19,7 @@
     canonicalize,
     isCommit,
   } from "@app/lib/utils";
-  import { mimes } from "@app/lib/file";
+  import { Renderer, markdown } from "@app/lib/markdown";
 
   export let content: string;
   export let path: string = "/";
@@ -92,7 +92,12 @@
 
   function render(content: string): string {
     return dompurify.sanitize(
-      markdownWithExtensions.parse(content, {
+      markdown({
+        katex: true,
+        emojis: true,
+        footnotes: true,
+        linkify: true,
+      }).parse(content, {
         renderer: new Renderer($activeUnloadedRouteStore),
         breaks,
       }) as string,
