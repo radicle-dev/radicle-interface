@@ -9,7 +9,6 @@
   import Icon from "./Icon.svelte";
 
   export let id: string;
-  export let clipboard: string = id;
   export let shorten: boolean = true;
   export let style: "oid" | "commit" | "none" = "oid";
   export let ariaLabel: string | undefined = undefined;
@@ -26,7 +25,7 @@
   }, 1000);
 
   async function copy() {
-    await toClipboard(clipboard);
+    await toClipboard(id);
     icon = "checkmark";
     tooltip = "Copied to clipboard";
     restoreIcon();

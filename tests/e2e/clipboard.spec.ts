@@ -1,18 +1,10 @@
-import type { Page } from "@playwright/test";
-
 import {
   expect,
   sourceBrowsingUrl,
   sourceBrowsingRid,
   test,
+  cobUrl,
 } from "@tests/support/fixtures.js";
-
-async function expectClipboard(content: string, page: Page) {
-  const clipboardContent = await page.evaluate<string>(
-    "navigator.clipboard.readText()",
-  );
-  expect(clipboardContent).toBe(content);
-}
 
 // We explicitly run all clipboard tests withing the context of a single test
 // so that we don't run into race conditions, because there is no way to isolate
@@ -25,6 +17,13 @@ test("copy to clipboard", async ({ page, browserName, context }) => {
     test.skip();
   }
 
+  async function expectClipboard(content: string) {
+    const clipboardContent = await page.evaluate<string>(
+      "navigator.clipboard.readText()",
+    );
+    expect(clipboardContent).toBe(content);
+  }
+
   await page.goto(sourceBrowsingUrl);
 
   // Reset system clipboard to a known state.
@@ -33,17 +32,14 @@ test("copy to clipboard", async ({ page, browserName, context }) => {
   // Repo ID.
   {
     await page.getByLabel("repo-id").click();
-    const clipboardContent = await page.evaluate<string>(
-      "navigator.clipboard.readText()",
-    );
-    expect(clipboardContent).toBe(sourceBrowsingRid);
+    await expectClipboard(sourceBrowsingRid);
   }
 
   // `rad clone` URL.
   {
     await page.getByRole("button", { name: "Clone" }).first().click();
     await page.getByText("rad clone").locator(".clipboard").first().click();
-    await expectClipboard(`rad clone ${sourceBrowsingRid}`, page);
+    await expectClipboard(`rad clone ${sourceBrowsingRid}`);
   }
 
   // `git clone` URL.
@@ -55,8 +51,19 @@ test("copy to clipboard", async ({ page, browserName, context }) => {
         "rad:",
         "",
       )}.git source-browsing`,
-      page,
     );
+  }
+
+  // After switching the patch or issue listing the `<Id>` components should return new COB ids.
+  {
+    await page.goto(`${cobUrl}/patches`);
+    await page.getByRole("button", { name: "59a0821", exact: true }).click();
+    await expectClipboard("59a0821edc73630bce540596cffc7854da557365");
+
+    await page.getByLabel("filter-dropdown").click();
+    await page.getByRole("button", { name: "Draft" }).click();
+    await page.getByRole("button", { name: "783d33c", exact: true }).click();
+    await expectClipboard("783d33c5b14e13234d4d7affa98bd0b52d1b1ea3");
   }
 
   // Clear the system clipboard contents so developers don't wonder why there's

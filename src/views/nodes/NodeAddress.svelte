@@ -13,7 +13,7 @@
 
 <div style:word-break="break-word">
   <!--prettier-ignore-->
-  <Id ariaLabel="node-id" shorten={false} id={clipboard} {clipboard}>
+  <Id ariaLabel="node-id" shorten={false} id={clipboard}>
     {#if node.config?.externalAddresses.length}
       {truncateId(node.id)}@<wbr />{node.config?.externalAddresses[0]}
     {:else}

@@ -30,12 +30,7 @@
 
 <div class="item">
   <div style:white-space="nowrap">User Agent</div>
-  <Id
-    ariaLabel="agent"
-    id={agent}
-    clipboard={agent}
-    shorten={false}
-    style="none">
+  <Id ariaLabel="agent" id={agent} shorten={false} style="none">
     <div class="agent">
       <div class="txt-overflow">{agent}</div>
     </div>
