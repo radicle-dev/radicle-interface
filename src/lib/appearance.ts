@@ -1,11 +1,37 @@
-import { writable } from "svelte/store";
+import storedWritable from "@app/lib/localStore";
+import { boolean, literal, union, z } from "zod";
 
-export type Theme = "dark" | "light";
-export const followSystemTheme = writable<boolean>(shouldFollowSystemTheme());
-export const theme = writable<Theme>(loadTheme());
+const themeSchema = union([literal("dark"), literal("light")]);
+type Theme = z.infer<typeof themeSchema>;
 
-export type CodeFont = "jetbrains" | "system";
-export const codeFont = writable<CodeFont>(loadCodeFont());
+export const followSystemTheme = storedWritable<boolean | undefined>(
+  "followSystemTheme",
+  boolean(),
+  !localStorage.getItem("theme"),
+  !window.localStorage,
+);
+export const theme = storedWritable<Theme>(
+  "theme",
+  themeSchema,
+  loadTheme(),
+  !window.localStorage,
+);
+
+export function loadTheme(): Theme {
+  const { matches } = window.matchMedia("(prefers-color-scheme: dark)");
+
+  return matches ? "dark" : "light";
+}
+
+const codeFontSchema = union([literal("jetbrains"), literal("system")]);
+type CodeFont = z.infer<typeof codeFontSchema>;
+
+export const codeFont = storedWritable(
+  "codefont",
+  codeFontSchema,
+  "jetbrains",
+  !window.localStorage,
+);
 
 export const codeFonts: {
   storedName: CodeFont;
@@ -19,64 +45,3 @@ export const codeFonts: {
   },
   { storedName: "system", fontFamily: "monospace", displayName: "System" },
 ];
-
-function loadCodeFont(): CodeFont {
-  const storedCodeFont = localStorage ? localStorage.getItem("codefont") : null;
-
-  if (storedCodeFont === null) {
-    return "jetbrains";
-  } else {
-    return storedCodeFont as CodeFont;
-  }
-}
-
-function shouldFollowSystemTheme(): boolean {
-  const storedTheme = localStorage ? localStorage.getItem("theme") : null;
-  if (storedTheme === null) {
-    return true; // default to following the system theme
-  } else {
-    return storedTheme === "system";
-  }
-}
-
-function loadTheme(): Theme {
-  const { matches } = window.matchMedia("(prefers-color-scheme: dark)");
-  const storedTheme = localStorage ? localStorage.getItem("theme") : null;
-
-  if (storedTheme === null || storedTheme === "system") {
-    return matches ? "dark" : "light";
-  } else {
-    return storedTheme as Theme;
-  }
-}
-
-export function storeTheme(newTheme: Theme | "system"): void {
-  followSystemTheme.set(newTheme === "system" ? true : false);
-  if (localStorage) {
-    localStorage.setItem("theme", newTheme);
-  } else {
-    console.warn(
-      "localStorage isn't available, not able to persist the selected theme without it.",
-    );
-  }
-  if (newTheme !== "system") {
-    // update the theme to newTheme
-    theme.set(newTheme);
-  } else {
-    // update the theme to the current system theme
-    theme.set(
-      window.matchMedia("(prefers-color-scheme: dark)") ? "dark" : "light",
-    );
-  }
-}
-
-export function storeCodeFont(newCodeFont: CodeFont): void {
-  codeFont.set(newCodeFont);
-  if (localStorage) {
-    localStorage.setItem("codefont", newCodeFont);
-  } else {
-    console.warn(
-      "localStorage isn't available, not able to persist the selected code font without it.",
-    );
-  }
-}

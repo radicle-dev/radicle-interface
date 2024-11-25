@@ -1,7 +1,7 @@
 import type { BaseUrl } from "@http-client";
 
 import isEqual from "lodash/isEqual";
-import storedWritable from "@efstajas/svelte-stored-writable";
+import storedWritable from "@app/lib/localStore";
 import { array, number, string, object } from "zod";
 import { get } from "svelte/store";
 

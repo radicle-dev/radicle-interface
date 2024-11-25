@@ -2,7 +2,7 @@
   import * as router from "@app/lib/router";
   import { unreachable } from "@app/lib/utils";
 
-  import { codeFont, theme } from "@app/lib/appearance";
+  import { codeFont, followSystemTheme, theme } from "@app/lib/appearance";
 
   import FullscreenModalPortal from "./App/FullscreenModalPortal.svelte";
   import Hotkeys from "./App/Hotkeys.svelte";
@@ -27,8 +27,9 @@
   window
     .matchMedia("(prefers-color-scheme: dark)")
     .addEventListener("change", ({ matches }) => {
-      theme.set(matches ? "dark" : "light");
-      followSystemTheme.set(true);
+      if ($followSystemTheme) {
+        theme.set(matches ? "dark" : "light");
+      }
     });
 
   void router.loadFromLocation();

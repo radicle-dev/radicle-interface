@@ -2,10 +2,9 @@
   import {
     codeFont,
     codeFonts,
-    storeCodeFont,
-    storeTheme,
     theme,
     followSystemTheme,
+    loadTheme,
   } from "@app/lib/appearance";
 
   import Button from "@app/components/Button.svelte";
@@ -47,7 +46,10 @@
           variant={!$followSystemTheme && $theme === "light"
             ? "selected"
             : "not-selected"}
-          on:click={() => storeTheme("light")}>
+          on:click={() => {
+            theme.set("light");
+            followSystemTheme.set(false);
+          }}>
           <Icon name="sun" />
         </Button>
         <div class="global-spacer" />
@@ -57,7 +59,10 @@
           variant={!$followSystemTheme && $theme === "dark"
             ? "selected"
             : "not-selected"}
-          on:click={() => storeTheme("dark")}>
+          on:click={() => {
+            theme.set("dark");
+            followSystemTheme.set(false);
+          }}>
           <Icon name="moon" />
         </Button>
         <div class="global-spacer" />
@@ -65,7 +70,10 @@
           ariaLabel="System Theme"
           styleBorderRadius="0"
           variant={$followSystemTheme ? "selected" : "not-selected"}
-          on:click={() => storeTheme("system")}>
+          on:click={() => {
+            theme.set(loadTheme());
+            followSystemTheme.set(true);
+          }}>
           <Icon name="device" />
         </Button>
       </Radio>
@@ -79,7 +87,7 @@
           <Button
             styleBorderRadius="0"
             styleFontFamily={font.fontFamily}
-            on:click={() => storeCodeFont(font.storedName)}
+            on:click={() => codeFont.set(font.storedName)}
             variant={$codeFont === font.storedName
               ? "selected"
               : "not-selected"}>
