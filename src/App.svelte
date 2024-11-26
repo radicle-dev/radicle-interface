@@ -2,7 +2,12 @@
   import * as router from "@app/lib/router";
   import { unreachable } from "@app/lib/utils";
 
-  import { codeFont, followSystemTheme, theme } from "@app/lib/appearance";
+  import {
+    codeFont,
+    followSystemTheme,
+    loadTheme,
+    theme,
+  } from "@app/lib/appearance";
 
   import FullscreenModalPortal from "./App/FullscreenModalPortal.svelte";
   import Hotkeys from "./App/Hotkeys.svelte";
@@ -31,6 +36,11 @@
         theme.set(matches ? "dark" : "light");
       }
     });
+
+  // Detect any change to the system theme on first load.
+  if ($followSystemTheme) {
+    theme.set(loadTheme());
+  }
 
   void router.loadFromLocation();
 
