@@ -66,6 +66,7 @@
     width: 40rem;
     max-height: 60vh;
     overflow-y: auto;
+    overscroll-behavior: contain;
     padding: 0.25rem;
   }
   .subgrid-item {
