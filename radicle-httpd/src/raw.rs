@@ -116,7 +116,7 @@ async fn file_by_commit_handler(
     let repo = storage.repository(rid)?;
 
     // Don't allow downloading raw files for private repos.
-    if repo.identity_doc()?.visibility.is_private() {
+    if repo.identity_doc()?.visibility().is_private() {
         return Err(Error::NotFound);
     }
 
@@ -134,7 +134,7 @@ async fn file_by_canonical_head_handler(
     let repo = storage.repository(rid)?;
 
     // Don't allow downloading raw files for private repos.
-    if repo.identity_doc()?.visibility.is_private() {
+    if repo.identity_doc()?.visibility().is_private() {
         return Err(Error::NotFound);
     }
 
@@ -176,7 +176,7 @@ async fn file_by_oid_handler(
     let repo = storage.repository(rid)?;
 
     // Don't allow downloading raw files for private repos.
-    if repo.identity_doc()?.visibility.is_private() {
+    if repo.identity_doc()?.visibility().is_private() {
         return Err(Error::NotFound);
     }
 

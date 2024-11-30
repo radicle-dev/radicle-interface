@@ -37,14 +37,14 @@ async fn delegates_repos_handler(
         RepoQuery::All => storage
             .repositories()?
             .into_iter()
-            .filter(|repo| repo.doc.visibility.is_public())
-            .filter(|repo| repo.doc.delegates.iter().any(|d| *d == did))
+            .filter(|repo| repo.doc.visibility().is_public())
+            .filter(|repo| repo.doc.delegates().iter().any(|d| *d == did))
             .collect::<Vec<_>>(),
         RepoQuery::Pinned => storage
             .repositories_by_id(pinned.repositories.iter())?
             .into_iter()
-            .filter(|repo| repo.doc.visibility.is_public())
-            .filter(|repo| repo.doc.delegates.iter().any(|d| *d == did))
+            .filter(|repo| repo.doc.visibility().is_public())
+            .filter(|repo| repo.doc.delegates().iter().any(|d| *d == did))
             .collect::<Vec<_>>(),
     };
     repos.sort_by_key(|p| p.rid);

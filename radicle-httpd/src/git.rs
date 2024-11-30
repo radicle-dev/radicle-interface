@@ -85,7 +85,7 @@ async fn git_http_backend(
 
     // Don't allow cloning of private repositories.
     let doc = profile.storage.repository(id)?.identity_doc()?;
-    if doc.visibility.is_private() {
+    if doc.visibility().is_private() {
         return Err(Error::NotFound);
     }
 

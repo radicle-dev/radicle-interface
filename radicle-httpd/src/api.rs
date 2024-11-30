@@ -56,15 +56,16 @@ impl Context {
 
         let aliases = self.profile.aliases();
         let delegates = doc
-            .delegates
-            .into_iter()
-            .map(|did| json::Author::new(&did).as_json(&aliases))
+            .delegates()
+            .iter()
+            .map(|did| json::Author::new(did).as_json(&aliases))
             .collect::<Vec<_>>();
         let db = &self.profile.database()?;
         let seeding = db.count(&rid).unwrap_or_default();
 
         let payloads: BTreeMap<PayloadId, Value> = doc
-            .payload
+            .payload()
+            .clone()
             .into_iter()
             .filter_map(|(id, payload)| {
                 if id == PayloadId::project() {
@@ -94,8 +95,8 @@ impl Context {
         Ok(repo::Info {
             payloads,
             delegates,
-            threshold: doc.threshold,
-            visibility: doc.visibility,
+            threshold: doc.threshold(),
+            visibility: doc.visibility().clone(),
             rid,
             seeding,
         })
@@ -106,7 +107,7 @@ impl Context {
         let repo = self.profile.storage.repository(rid)?;
         let doc = repo.identity_doc()?;
         // Don't allow accessing private repos.
-        if doc.visibility.is_private() {
+        if doc.visibility().is_private() {
             return Err(Error::NotFound);
         }
         Ok((repo, doc))
@@ -150,11 +151,9 @@ mod search {
     use std::cmp::Ordering;
     use std::collections::BTreeMap;
 
-    use nonempty::NonEmpty;
     use serde::{Deserialize, Serialize};
     use serde_json::json;
 
-    use radicle::crypto::Verified;
     use radicle::identity::doc::{Payload, PayloadId};
     use radicle::identity::RepoId;
     use radicle::node::routing::Store;
@@ -174,7 +173,7 @@ mod search {
     pub struct SearchResult {
         pub rid: RepoId,
         pub payloads: BTreeMap<PayloadId, Payload>,
-        pub delegates: NonEmpty<serde_json::Value>,
+        pub delegates: Vec<serde_json::Value>,
         pub seeds: usize,
         #[serde(skip)]
         pub index: usize,
@@ -183,30 +182,35 @@ mod search {
     impl SearchResult {
         pub fn new(
             q: &str,
-            info: RepositoryInfo<Verified>,
+            info: RepositoryInfo,
             db: &Database,
             aliases: &Aliases,
         ) -> Option<Self> {
-            if info.doc.visibility.is_private() {
+            if info.doc.visibility().is_private() {
                 return None;
             }
             let Ok(Some(index)) = info.doc.project().map(|p| p.name().find(q)) else {
                 return None;
             };
             let seeds = db.count(&info.rid).unwrap_or_default();
-            let delegates = info.doc.delegates.map(|did| match aliases.alias(&did) {
-                Some(alias) => json!({
-                    "id": did,
-                    "alias": alias,
-                }),
-                None => json!({
-                    "id": did,
-                }),
-            });
+            let delegates = info
+                .doc
+                .delegates()
+                .iter()
+                .map(|did| match aliases.alias(did) {
+                    Some(alias) => json!({
+                        "id": did,
+                        "alias": alias,
+                    }),
+                    None => json!({
+                        "id": did,
+                    }),
+                })
+                .collect::<Vec<_>>();
 
             Some(SearchResult {
                 rid: info.rid,
-                payloads: info.doc.payload,
+                payloads: info.doc.payload().clone(),
                 delegates,
                 seeds,
                 index,

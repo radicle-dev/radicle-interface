@@ -7,20 +7,21 @@ use std::sync::Arc;
 use axum::body::{Body, Bytes};
 use axum::http::{Method, Request};
 use axum::Router;
-use radicle::node::{Features, Timestamp, UserAgent};
 use serde_json::Value;
 use tower::ServiceExt;
 
+use radicle::cob::migrate;
 use radicle::cob::patch::MergeTarget;
 use radicle::crypto::ssh::Keystore;
+use radicle::crypto::test::signer::MockSigner;
 use radicle::crypto::{KeyPair, Seed, Signer};
 use radicle::git::{raw as git2, RefString};
 use radicle::identity::{project, Visibility};
+use radicle::node::{Features, Timestamp, UserAgent};
 use radicle::profile::{env, Home};
 use radicle::storage::ReadStorage;
 use radicle::{node, profile};
 use radicle::{Node, Storage};
-use radicle_crypto::test::signer::MockSigner;
 
 use crate::api::Context;
 
@@ -64,6 +65,10 @@ pub fn profile(home: &Path, seed: [u8; 32]) -> radicle::Profile {
             [],
         )
         .unwrap();
+
+    // Migrate COBs cache.
+    let mut cobs = home.cobs_db_mut().unwrap();
+    cobs.migrate(migrate::ignore).unwrap();
 
     radicle::storage::git::transport::local::register(storage.clone());
     keystore.store(keypair.clone(), "radicle", None).unwrap();

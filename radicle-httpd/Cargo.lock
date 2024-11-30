@@ -1581,9 +1581,9 @@ dependencies = [
 
 [[package]]
 name = "radicle"
-version = "0.13.0"
+version = "0.14.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "4a818569c11f1bac56f38b002d778ce8ec92e312024b9aebcd68bad5dee6a465"
+checksum = "fd823aeed3ffe73eb82a213e62cb3811f9bdf453844d6e0b14684e0757fb389b"
 dependencies = [
  "amplify",
  "base64 0.21.7",
@@ -1612,9 +1612,9 @@ dependencies = [
 
 [[package]]
 name = "radicle-cob"
-version = "0.12.0"
+version = "0.13.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "d4fac94999d8ffb6e88674bee487b080b69bbc9fb1b439ebfa51481ede1a17b3"
+checksum = "90581a9508ccc310998e991d7acf139d2991297d3fb37d30de07536e10256afb"
 dependencies = [
  "fastrand",
  "git2",
@@ -1652,9 +1652,9 @@ dependencies = [
 
 [[package]]
 name = "radicle-dag"
-version = "0.9.0"
+version = "0.10.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "c2a678c3049a88ae6a34dd9f52ea9a5f9f066a0af63466b75cf8c48840303067"
+checksum = "cb41c7e10ada3a4df960190a96bfb4af56d33ada890f917acc8e3b122b614875"
 dependencies = [
  "fastrand",
 ]

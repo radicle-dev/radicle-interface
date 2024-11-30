@@ -73,12 +73,12 @@ async fn repo_root_handler(
         RepoQuery::All => storage
             .repositories()?
             .into_iter()
-            .filter(|repo| repo.doc.visibility.is_public())
+            .filter(|repo| repo.doc.visibility().is_public())
             .collect::<Vec<_>>(),
         RepoQuery::Pinned => storage
             .repositories_by_id(pinned.repositories.iter())?
             .into_iter()
-            .filter(|repo| repo.doc.visibility.is_public())
+            .filter(|repo| repo.doc.visibility().is_public())
             .collect::<Vec<_>>(),
     };
     repos.sort_by_key(|p| p.rid);
@@ -436,7 +436,7 @@ async fn stats_tree_handler(
 /// `GET /repos/:rid/remotes`
 async fn remotes_handler(State(ctx): State<Context>, Path(rid): Path<RepoId>) -> impl IntoResponse {
     let (repo, doc) = ctx.repo(rid)?;
-    let delegates = &doc.delegates;
+    let delegates = doc.delegates();
     let aliases = &ctx.profile.aliases();
     let remotes = repo
         .remotes()?
@@ -478,7 +478,7 @@ async fn remote_handler(
     Path((rid, node_id)): Path<(RepoId, NodeId)>,
 ) -> impl IntoResponse {
     let (repo, doc) = ctx.repo(rid)?;
-    let delegates = &doc.delegates;
+    let delegates = doc.delegates();
     let remote = repo.remote(&node_id)?;
     let refs = remote
         .refs
