@@ -35,7 +35,7 @@ RUN curl -sSf -o zig.tar.xz         https://ziglang.org/download/0.12.0/zig-linu
     xz -d -c zig.tar.xz | tar -x && \
     mv zig-linux-x86_64-0.12.0/zig /usr/bin/zig && \
     mv zig-linux-x86_64-0.12.0/lib /usr/lib/zig && \
-    cargo install cargo-zigbuild@0.18.3
+    cargo install cargo-zigbuild@0.18.3 --locked
 
 
 # Parts of the macOS SDK are required to build Radicle, we make these available

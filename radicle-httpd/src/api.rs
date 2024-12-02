@@ -65,10 +65,9 @@ impl Context {
 
         let payloads: BTreeMap<PayloadId, Value> = doc
             .payload()
-            .clone()
-            .into_iter()
+            .iter()
             .filter_map(|(id, payload)| {
-                if id == PayloadId::project() {
+                if id == &PayloadId::project() {
                     let (_, head) = repo.head().ok()?;
                     let patches = self.profile.patches(repo).ok()?;
                     let patches = patches.counts().ok()?;
@@ -76,7 +75,7 @@ impl Context {
                     let issues = issues.counts().ok()?;
 
                     Some((
-                        id,
+                        id.clone(),
                         json!({
                             "data": payload,
                             "meta": {
@@ -87,7 +86,7 @@ impl Context {
                         }),
                     ))
                 } else {
-                    Some((id, json!({ "data": payload })))
+                    Some((id.clone(), json!({ "data": payload })))
                 }
             })
             .collect();
