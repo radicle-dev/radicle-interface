@@ -1,7 +1,7 @@
 {
   "nodes": {
     "fallbackPublicExplorer": "https://app.radicle.xyz/nodes/$host/$rid$path",
-    "apiVersion": "6.0.0",
+    "requiredApiVersion": "^6.0.0",
     "defaultHttpdPort": 443,
     "defaultHttpdScheme": "https"
   },

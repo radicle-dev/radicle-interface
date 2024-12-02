@@ -1,7 +1,7 @@
 declare module "virtual:*" {
   const config: {
     nodes: {
-      apiVersion: string;
+      requiredApiVersion: string;
       fallbackPublicExplorer: string;
       defaultHttpdPort: number;
       defaultLocalHttpdPort: number;

@@ -4,7 +4,7 @@
 import type { ZodIssue, ZodType, TypeOf } from "zod";
 
 import config from "virtual:config";
-import { compare } from "compare-versions";
+import { satisfies } from "compare-versions";
 
 export interface BaseUrl {
   hostname: string;
@@ -52,26 +52,19 @@ export class ResponseParseError extends Error {
   public constructor(
     method: string,
     body: unknown,
-    apiVersion: string | undefined,
+    apiVersion: string,
     zodIssues: ZodIssue[],
     path?: string,
   ) {
     super("Failed to parse response body");
+    const explorerRequiredApiVersion = config.nodes.requiredApiVersion;
+    const nodeApiVersion = apiVersion;
 
     let description: string;
-    if (
-      apiVersion === undefined ||
-      compare(apiVersion, config.nodes.apiVersion, "<")
-    ) {
-      description = `The node you are fetching from seems to be outdated, make sure the httpd API version is at least ${config.nodes.apiVersion} currently ${apiVersion ?? "unknown"}.`;
-    } else if (
-      config.nodes.apiVersion === undefined ||
-      compare(apiVersion, config.nodes.apiVersion, ">")
-    ) {
-      description = `The web client you are using is outdated, make sure it supports at least ${apiVersion} to interact with this node currently ${config.nodes.apiVersion ?? "unknown"}.`;
+    if (!satisfies(nodeApiVersion, explorerRequiredApiVersion)) {
+      description = `The node you are fetching from (v${nodeApiVersion}) doesn't match the version requirements of the web client ${explorerRequiredApiVersion}.`;
     } else {
-      description =
-        "This is usually due to a version mismatch between the seed and the web interface.";
+      description = `The node (v${nodeApiVersion}) matches the version requirement of the web client (${explorerRequiredApiVersion}), but the web client isn't able to parse the response.`;
     }
     this.apiVersion = apiVersion;
     this.description =
@@ -122,7 +115,7 @@ export class Fetcher {
   ): Promise<TypeOf<T>> {
     const response = await this.fetch({
       ...params,
-      query: { ...params.query, v: config.nodes.apiVersion },
+      query: { ...params.query, v: config.nodes.requiredApiVersion },
     });
 
     if (!response.ok) {
