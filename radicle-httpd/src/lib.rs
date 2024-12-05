@@ -17,7 +17,11 @@ use axum::http::{Request, Response};
 use axum::response::IntoResponse;
 use axum::routing::get;
 use axum::{middleware, Json, Router};
+use hyper::header::CONTENT_TYPE;
+use hyper::Method;
 use tokio::net::TcpListener;
+use tower_http::cors;
+use tower_http::cors::CorsLayer;
 use tower_http::trace::TraceLayer;
 use tracing::Span;
 
@@ -119,7 +123,14 @@ fn router(options: Options, profile: Profile) -> anyhow::Result<Router> {
         .route("/", get(root_index_handler))
         .merge(git_router)
         .nest("/api", api_router)
-        .nest("/raw", raw_router);
+        .nest("/raw", raw_router)
+        .layer(
+            CorsLayer::new()
+                .max_age(Duration::from_secs(86400))
+                .allow_origin(cors::Any)
+                .allow_methods([Method::GET])
+                .allow_headers([CONTENT_TYPE]),
+        );
 
     Ok(app)
 }

@@ -1,14 +1,10 @@
 use std::collections::BTreeMap;
 use std::sync::Arc;
-use std::time::Duration;
 
-use axum::http::header::CONTENT_TYPE;
-use axum::http::Method;
 use axum::response::{IntoResponse, Json};
 use axum::routing::get;
 use axum::Router;
 use serde_json::{json, Value};
-use tower_http::cors::{self, CorsLayer};
 
 use radicle::identity::doc::PayloadId;
 use radicle::identity::{DocAt, RepoId};
@@ -122,13 +118,6 @@ pub fn router(ctx: Context) -> Router {
     Router::new()
         .route("/", get(root_handler))
         .merge(v1::router(ctx))
-        .layer(
-            CorsLayer::new()
-                .max_age(Duration::from_secs(86400))
-                .allow_origin(cors::Any)
-                .allow_methods([Method::GET])
-                .allow_headers([CONTENT_TYPE]),
-        )
 }
 
 async fn root_handler() -> impl IntoResponse {

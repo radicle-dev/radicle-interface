@@ -1,14 +1,12 @@
 use std::sync::Arc;
-use std::time::Duration;
 
 use axum::extract::{Query, State};
-use axum::http::{header, HeaderValue, Method, StatusCode};
+use axum::http::{header, HeaderValue, StatusCode};
 use axum::response::IntoResponse;
 use axum::routing::get;
 use axum::Router;
 use hyper::HeaderMap;
 use radicle_surf::blob::{Blob, BlobRef};
-use tower_http::cors;
 
 use radicle::prelude::RepoId;
 use radicle::profile::Profile;
@@ -99,13 +97,6 @@ pub fn router(profile: Arc<Profile>) -> Router {
         .route("/:rid/head/*path", get(file_by_canonical_head_handler))
         .route("/:rid/blobs/:oid", get(file_by_oid_handler))
         .with_state(profile)
-        .layer(
-            cors::CorsLayer::new()
-                .max_age(Duration::from_secs(86400))
-                .allow_origin(cors::Any)
-                .allow_methods([Method::GET])
-                .allow_headers([header::CONTENT_TYPE]),
-        )
 }
 
 async fn file_by_commit_handler(
