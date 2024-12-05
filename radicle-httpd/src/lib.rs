@@ -30,6 +30,8 @@ use radicle::Profile;
 
 use tracing_extra::{tracing_middleware, ColoredStatus, Paint, RequestId, TracingInfo};
 
+use crate::api::RADICLE_VERSION;
+
 mod api;
 mod axum_extra;
 mod cache;
@@ -138,6 +140,7 @@ fn router(options: Options, profile: Profile) -> anyhow::Result<Router> {
 async fn root_index_handler() -> impl IntoResponse {
     let response = serde_json::json!({
         "welcome": "Welcome to the radicle-httpd JSON API, this service doesn't serve the Radicle Explorer web client.",
+        "version": format!("{}-{}", RADICLE_VERSION, env!("GIT_HEAD")),
         "path": "/",
         "links": [
             {
