@@ -1,7 +1,7 @@
 {
   "nodes": {
     "fallbackPublicExplorer": "https://app.radicle.xyz/nodes/$host/$rid$path",
-    "requiredApiVersion": "^6.0.0",
+    "requiredApiVersion": "~0.18.0",
     "defaultHttpdPort": 443,
     "defaultHttpdScheme": "https"
   },
@@ -9,6 +9,7 @@
     "commitsPerPage": 30
   },
   "supportWebsite": "https://radicle.zulipchat.com",
+  "deploymentId": null,
   "preferredSeeds": [
     {
       "hostname": "ash.radicle.garden",

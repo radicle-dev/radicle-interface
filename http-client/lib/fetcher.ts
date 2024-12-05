@@ -113,10 +113,12 @@ export class Fetcher {
     params: FetchParams,
     schema: T,
   ): Promise<TypeOf<T>> {
-    const response = await this.fetch({
-      ...params,
-      query: { ...params.query, v: config.nodes.requiredApiVersion },
-    });
+    if (config.deploymentId) {
+      params.query ||= {};
+      params.query["deployment_id"] = config.deploymentId;
+    }
+
+    const response = await this.fetch(params);
 
     if (!response.ok) {
       let responseBody = await response.text();
@@ -138,7 +140,7 @@ export class Fetcher {
       throw new ResponseParseError(
         params.method,
         responseBody,
-        info.apiVersion,
+        info.version,
         result.error.errors,
         params.path,
       );

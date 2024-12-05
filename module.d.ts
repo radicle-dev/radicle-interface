@@ -10,6 +10,7 @@ declare module "virtual:*" {
     source: {
       commitsPerPage: number;
     };
+    deploymentId: string | null;
     reactions: string[];
     supportWebsite: string;
     preferredSeeds: BaseUrl[];
