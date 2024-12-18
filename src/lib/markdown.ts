@@ -13,10 +13,52 @@ import { canonicalize, isUrl } from "@app/lib/utils";
 import { routeToPath } from "@app/lib/router";
 
 dompurify.setConfig({
-  // eslint-disable-next-line @typescript-eslint/naming-convention
-  SANITIZE_DOM: false,
-  // eslint-disable-next-line @typescript-eslint/naming-convention
-  FORBID_TAGS: ["textarea", "style"],
+  /* eslint-disable @typescript-eslint/naming-convention */
+  ALLOWED_ATTR: [
+    "align",
+    "checked",
+    "class",
+    "href",
+    "id",
+    "name",
+    "target",
+    "text",
+    "title",
+    "src",
+    "type",
+  ],
+  ALLOWED_TAGS: [
+    "a",
+    "blockquote",
+    "br",
+    "code",
+    "dd",
+    "div",
+    "dl",
+    "dt",
+    "em",
+    "h1",
+    "h2",
+    "h3",
+    "h4",
+    "h5",
+    "h6",
+    "hr",
+    "img",
+    "input",
+    "li",
+    "ol",
+    "p",
+    "pre",
+    "table",
+    "tbody",
+    "td",
+    "th",
+    "thead",
+    "tr",
+    "ul",
+  ],
+  /* eslint-enable @typescript-eslint/naming-convention */
 });
 
 export class Renderer extends BaseRenderer {
