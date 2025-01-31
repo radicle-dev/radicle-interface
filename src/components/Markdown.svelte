@@ -1,6 +1,4 @@
 <script lang="ts">
-  import type { Embed } from "@http-client";
-
   import dompurify from "dompurify";
   import matter from "@radicle/gray-matter";
   import { afterUpdate } from "svelte";
@@ -24,9 +22,6 @@
   export let content: string;
   export let path: string = "/";
   export let rawPath: string;
-  // If present, means we are in a preview context,
-  // use this for image previews instead of /raw URLs.
-  export let embeds: Map<string, Embed> | undefined = undefined;
   // If true, add <br> on a single line break
   export let breaks: boolean = false;
 
@@ -114,6 +109,67 @@
       } catch (e) {
         console.warn("Not able to parse url", e);
       }
+
+      const anchorHref = e.getAttribute("href");
+
+      // If the anchor is an oid embed
+      if (anchorHref && isCommit(anchorHref)) {
+        const url = new URL(rawPath);
+        // deprecated with httpd 0.18.1
+        // For older httpd versions we still pass the mime type.
+        // On newer radicle-httpd instances we try to infer the file type on httpd.
+        const fileExtension = e.innerText.split(".").pop();
+        if (fileExtension && fileExtension in mimes) {
+          url.search = `?mime=${mimes[fileExtension]}`;
+        }
+        url.pathname = canonicalize(`blobs/${anchorHref}`, url.pathname);
+        e.setAttribute("href", url.toString());
+
+        // To determine the filetype of the embed we query the content-type of the resource URL.
+        const req = await fetch(url, { method: "HEAD" });
+        const mimeType = req.headers.get("Content-Type");
+
+        // Embed an img element below the link
+        if (mimeType?.startsWith("image")) {
+          const element = document.createElement("img");
+          element.setAttribute("src", url.toString());
+          element.style.display = "block";
+          e.style.display = "block";
+          e.insertAdjacentElement("afterend", element);
+          // Embed an iframe to display pdf correctly element below the link
+        } else if (mimeType?.startsWith("application/pdf")) {
+          const element = document.createElement("embed");
+          element.setAttribute("src", url.toString());
+          element.type = mimeType;
+          element.style.overflow = "scroll";
+          element.style.height = "40rem";
+          element.style.overscrollBehavior = "contain";
+          e.style.display = "block";
+          e.insertAdjacentElement("afterend", element);
+        } else if (mimeType?.startsWith("video")) {
+          const element = document.createElement("video");
+          const node = document.createElement("source");
+          node.src = url.toString();
+          element.controls = true;
+          node.type = mimeType;
+          element.style.width = "100%";
+          e.style.display = "block";
+          element.appendChild(node);
+          e.insertAdjacentElement("afterend", element);
+        } else if (mimeType?.startsWith("audio")) {
+          const element = document.createElement("audio");
+          element.style.display = "block";
+          element.src = url.toString();
+          element.controls = true;
+          e.style.display = "block";
+          e.insertAdjacentElement("afterend", element);
+        } else {
+          console.warn(`Not able to provide a preview for this file.`);
+        }
+
+        continue;
+      }
+
       // Don't underline <a> tags that contain images.
       // Make an exception for emojis.
       if (
@@ -143,27 +199,6 @@
     for (const i of container.querySelectorAll("img")) {
       const imagePath = i.getAttribute("src");
       const imageClass = i.getAttribute("class");
-
-      // If the image is an oid embed
-      if (imagePath && isCommit(imagePath)) {
-        const embed = embeds?.get(imagePath);
-        // If the embed content is the base64 encoded image, use it directly.
-        if (embed && embed.content.startsWith("data:")) {
-          i.setAttribute("src", embed.content);
-          continue;
-        }
-
-        const fileExtension = i.alt.split(".").pop();
-        const url = new URL(rawPath);
-        // If a user changes the alt text of an image,
-        // the browser is still able to infer the mime type.
-        if (fileExtension && fileExtension in mimes) {
-          url.search = `?mime=${mimes[fileExtension]}`;
-        }
-        url.pathname = canonicalize(`blobs/${imagePath}`, url.pathname);
-        i.setAttribute("src", url.toString());
-        continue;
-      }
 
       // Make sure the source isn't a URL before trying to fetch it from the repo
       const emoji = imageClass && imageClass === "txt-emoji";

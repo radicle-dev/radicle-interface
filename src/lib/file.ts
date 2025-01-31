@@ -27,6 +27,7 @@ export const mimes: Record<string, string> = {
   mp3: "audio/mpeg",
   mp4: "video/mp4",
   mpeg: "video/mpeg",
+  mov: "video/mp4",
   odp: "application/vnd.oasis.opendocument.presentation",
   ods: "application/vnd.oasis.opendocument.spreadsheet",
   odt: "application/vnd.oasis.opendocument.text",
