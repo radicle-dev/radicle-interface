@@ -17,7 +17,7 @@ use crate::api::query::RawQuery;
 use crate::axum_extra::Path;
 use crate::error::RawError as Error;
 
-const MAX_BLOB_SIZE: usize = 4_194_304;
+const MAX_BLOB_SIZE: usize = 10_485_760;
 
 static MIMES: &[(&str, &str)] = &[
     ("3gp", "video/3gpp"),
