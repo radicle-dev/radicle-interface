@@ -161,7 +161,7 @@ fn blob_response(
 async fn file_by_oid_handler(
     Path((rid, oid)): Path<(RepoId, Oid)>,
     State(profile): State<Arc<Profile>>,
-    Query(qs): Query<RawQuery>,
+    Query(_qs): Query<RawQuery>,
 ) -> impl IntoResponse {
     let storage = &profile.storage;
     let repo = storage.repository(rid)?;
@@ -172,6 +172,8 @@ async fn file_by_oid_handler(
     }
 
     let blob = repo.blob(oid)?;
+    let content = blob.content();
+    let mime = infer::get(content).map(|i| i.mime_type().to_string());
     let mut response_headers = HeaderMap::new();
 
     if blob.size() > MAX_BLOB_SIZE {
@@ -180,10 +182,10 @@ async fn file_by_oid_handler(
 
     response_headers.insert(
         header::CONTENT_TYPE,
-        HeaderValue::from_str(&qs.mime.unwrap_or("application/octet-stream".to_string()))?,
+        HeaderValue::from_str(&mime.unwrap_or("application/octet-stream".to_string()))?,
     );
 
-    Ok::<_, Error>((StatusCode::OK, response_headers, blob.content().to_vec()))
+    Ok::<_, Error>((StatusCode::OK, response_headers, content.to_vec()))
 }
 
 #[cfg(test)]

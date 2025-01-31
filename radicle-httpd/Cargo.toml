@@ -27,6 +27,7 @@ base64 = { version = "0.22.1" }
 chrono = { version = "0.4.38", default-features = false, features = ["clock"] }
 flate2 = { version = "1" }
 hyper = { version = "1.4", default-features = false }
+infer = { version = "0.16.0" }
 lexopt = { version = "0.3.0" }
 lru = { version = "0.12.4" }
 nonempty = { version = "0.9.0", features = ["serialize"] }
