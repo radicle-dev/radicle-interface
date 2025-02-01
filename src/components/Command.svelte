@@ -1,13 +1,11 @@
 <script lang="ts">
-  import { SvelteComponent } from "svelte";
-
   import Clipboard from "@app/components/Clipboard.svelte";
 
   export let command: string;
   export let fullWidth: boolean = false;
   export let showPrompt: boolean = true;
 
-  let clipboard: SvelteComponent;
+  let clipboard: Clipboard;
 </script>
 
 <style>

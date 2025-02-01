@@ -230,7 +230,7 @@
       </CobHeader>
       <div class="bottom">
         {#if threads.length > 0}
-          <div class="connector" />
+          <div class="connector"></div>
           <div class="threads">
             {#each threads as thread, i (thread.root.id)}
               <ThreadComponent
@@ -240,7 +240,7 @@
                   repo.payloads["xyz.radicle.project"].meta.head,
                 )} />
               {#if i < threads.length - 1}
-                <div class="connector" />
+                <div class="connector"></div>
               {/if}
             {/each}
           </div>

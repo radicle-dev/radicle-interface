@@ -1,11 +1,11 @@
-import type { ComponentProps, ComponentType, SvelteComponent } from "svelte";
+import type { Component, ComponentProps } from "svelte";
 
 import { derived, get, writable } from "svelte/store";
 
 type HideCallback = () => void;
 
 type Modal = {
-  component: ComponentType;
+  component: Component;
   props: Record<string, unknown>;
   hideCallback?: HideCallback;
   disableHide?: boolean;
@@ -42,15 +42,14 @@ export function hide(): void {
   store.set(undefined);
 }
 
-interface ShowArgs<T extends SvelteComponent> {
-  component: ComponentType<T>;
+interface ShowArgs<T extends Component> {
+  component: T;
   props: ComponentProps<T>;
   hideCallback?: HideCallback;
 }
 
-export function show<Component extends SvelteComponent>(
-  args: ShowArgs<Component>,
-): void {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export function show<T extends Component<any>>(args: ShowArgs<T>): void {
   // Defocus any active input elements, so that we can always close an open
   // modal via the `esc` hotkey.
   if (document.activeElement instanceof HTMLElement) {
@@ -59,9 +58,8 @@ export function show<Component extends SvelteComponent>(
   store.set(args);
 }
 
-export function toggle<Component extends SvelteComponent>(
-  args: ShowArgs<Component>,
-): void {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export function toggle<T extends Component<any>>(args: ShowArgs<T>): void {
   const stored = get(modalStore);
 
   if (stored && stored.component === args.component) {

@@ -403,7 +403,7 @@
       </CobHeader>
 
       <div class="tabs">
-        <div class="tabs-spacer" />
+        <div class="tabs-spacer"></div>
         <Radio styleGap="0.375rem">
           {#each Object.entries(tabs) as [name, { route, icon }]}
             <Link {route}>
@@ -438,7 +438,7 @@
             </div>
           </div>
         {/if}
-        <div class="tabs-spacer" />
+        <div class="tabs-spacer"></div>
       </div>
       <div class="bottom">
         {#if view.name === "changes"}

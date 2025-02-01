@@ -23,4 +23,5 @@
   role="progressbar"
   aria-label="Page loading"
   class="loading-bar"
-  class:visible={$isLoading} />
+  class:visible={$isLoading}>
+</div>

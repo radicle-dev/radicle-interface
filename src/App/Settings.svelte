@@ -52,7 +52,7 @@
           }}>
           <Icon name="sun" />
         </Button>
-        <div class="global-spacer" />
+        <div class="global-spacer"></div>
         <Button
           ariaLabel="Dark Mode"
           styleBorderRadius="0"
@@ -65,7 +65,7 @@
           }}>
           <Icon name="moon" />
         </Button>
-        <div class="global-spacer" />
+        <div class="global-spacer"></div>
         <Button
           ariaLabel="System Theme"
           styleBorderRadius="0"
@@ -93,7 +93,7 @@
               : "not-selected"}>
             {font.displayName}
           </Button>
-          <div class="global-spacer" />
+          <div class="global-spacer"></div>
         {/each}
       </Radio>
     </div>

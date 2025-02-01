@@ -142,7 +142,7 @@
   }}>
   <div class="repo-card" class:compact>
     <div class="activity">
-      <div class="fadeout-overlay" />
+      <div class="fadeout-overlay"></div>
       <ActivityDiagram
         id={repo.rid}
         viewBoxHeight={200}

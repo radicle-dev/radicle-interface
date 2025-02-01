@@ -58,7 +58,7 @@
           <Icon name="logo" />
           Radicle
         </Button>
-        <div class="global-spacer" />
+        <div class="global-spacer"></div>
         <Button
           styleWidth="100%"
           styleBorderRadius="0"

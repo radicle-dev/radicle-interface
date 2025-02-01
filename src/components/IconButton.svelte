@@ -1,4 +1,4 @@
-<script lang="ts" strictEvent>
+<script lang="ts">
   import { createEventDispatcher } from "svelte";
 
   import Loading from "./Loading.svelte";

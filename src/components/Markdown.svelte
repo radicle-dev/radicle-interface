@@ -517,12 +517,14 @@
 {#if frontMatter && frontMatter.length > 0}
   <div class="front-matter">
     <table>
-      {#each frontMatter as [key, val]}
-        <tr>
-          <td><span class="txt-bold">{key}</span></td>
-          <td>{val}</td>
-        </tr>
-      {/each}
+      <tbody>
+        {#each frontMatter as [key, val]}
+          <tr>
+            <td><span class="txt-bold">{key}</span></td>
+            <td>{val}</td>
+          </tr>
+        {/each}
+      </tbody>
     </table>
   </div>
 {/if}

@@ -53,7 +53,7 @@
 
       <div slot="popover">
         <Help hideShortcuts />
-        <div class="divider" />
+        <div class="divider"></div>
         <Settings />
       </div>
     </Popover>

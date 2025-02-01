@@ -322,7 +322,7 @@
           <PolicyExplainer seedingPolicy={node.config?.seedingPolicy} />
           <div class="sidebar-item">
             <Seeding count={stats.repos.total}>
-              <div style:width="2rem" />
+              <div style:width="2rem"></div>
             </Seeding>
           </div>
           <div class="sidebar-item">

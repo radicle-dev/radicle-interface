@@ -452,65 +452,67 @@
     {#if fileDiff.type === "plain"}
       {#if fileDiff.hunks.length > 0 && !preview}
         <table class="diff" data-file-diff-select>
-          {#each fileDiff.hunks as hunk, hunkIdx}
-            <tr
-              class="diff-line hunk-header"
-              class:selected={hunkHeaderSelected(selection, hunkIdx)}>
-              <td colspan={2} style:position="relative">
-                <div class="selection-indicator-left" />
-              </td>
-              <td
-                colspan={6}
-                class="diff-expand-header"
-                style:position="relative">
-                {hunk.header}
-                <div class="selection-indicator-right" />
-              </td>
-            </tr>
-            {#each hunk.lines as line, lineIdx}
+          <tbody>
+            {#each fileDiff.hunks as hunk, hunkIdx}
               <tr
-                style:position="relative"
-                class={`diff-line type-${line.type}`}
-                class:selection-start={selection?.startHunk === hunkIdx &&
-                  selection.startLine === lineIdx}
-                class:selection-end={(selection?.endHunk === hunkIdx &&
-                  selection.endLine === lineIdx) ||
-                  (selection?.startHunk === hunkIdx &&
-                    selection.startLine === lineIdx &&
-                    selection?.endHunk === undefined)}
-                class:selected={isLineSelected(selection, hunkIdx, lineIdx)}>
-                <td
-                  id={[filePath, "H" + hunkIdx, "L" + lineIdx].join("-")}
-                  class="diff-line-number left"
-                  on:click={e => selectLine(hunkIdx, lineIdx, e)}>
-                  <div class="selection-indicator-left" />
-                  {lineNumberL(line)}
+                class="diff-line hunk-header"
+                class:selected={hunkHeaderSelected(selection, hunkIdx)}>
+                <td colspan={2} style:position="relative">
+                  <div class="selection-indicator-left"></div>
                 </td>
                 <td
-                  class="diff-line-number right"
-                  on:click={e => selectLine(hunkIdx, lineIdx, e)}>
-                  {lineNumberR(line)}
+                  colspan={6}
+                  class="diff-expand-header"
+                  style:position="relative">
+                  {hunk.header}
+                  <div class="selection-indicator-right"></div>
                 </td>
-                <td class="diff-line-type" data-line-type={line.type}>
-                  {lineSign(line)}
-                </td>
-                <td class="diff-line-content">
-                  {#if highlighting}
-                    {#if line.type === "addition" && highlighting.new}
-                      {@html highlighting.new[line.lineNo - 1]}
-                    {:else if line.type === "context" && highlighting.new}
-                      {@html highlighting.new[line.lineNoNew - 1]}
-                    {:else if line.type === "deletion" && highlighting.old}
-                      {@html highlighting.old[line.lineNo - 1]}
-                    {/if}
-                  {:else}
-                    {line.line}
-                  {/if}
-                </td>
-                <div class="selection-indicator-right" />
               </tr>
+              {#each hunk.lines as line, lineIdx}
+                <tr
+                  style:position="relative"
+                  class={`diff-line type-${line.type}`}
+                  class:selection-start={selection?.startHunk === hunkIdx &&
+                    selection.startLine === lineIdx}
+                  class:selection-end={(selection?.endHunk === hunkIdx &&
+                    selection.endLine === lineIdx) ||
+                    (selection?.startHunk === hunkIdx &&
+                      selection.startLine === lineIdx &&
+                      selection?.endHunk === undefined)}
+                  class:selected={isLineSelected(selection, hunkIdx, lineIdx)}>
+                  <td
+                    id={[filePath, "H" + hunkIdx, "L" + lineIdx].join("-")}
+                    class="diff-line-number left"
+                    on:click={e => selectLine(hunkIdx, lineIdx, e)}>
+                    <div class="selection-indicator-left"></div>
+                    {lineNumberL(line)}
+                  </td>
+                  <td
+                    class="diff-line-number right"
+                    on:click={e => selectLine(hunkIdx, lineIdx, e)}>
+                    {lineNumberR(line)}
+                  </td>
+                  <td class="diff-line-type" data-line-type={line.type}>
+                    {lineSign(line)}
+                  </td>
+                  <td class="diff-line-content">
+                    {#if highlighting}
+                      {#if line.type === "addition" && highlighting.new}
+                        {@html highlighting.new[line.lineNo - 1]}
+                      {:else if line.type === "context" && highlighting.new}
+                        {@html highlighting.new[line.lineNoNew - 1]}
+                      {:else if line.type === "deletion" && highlighting.old}
+                        {@html highlighting.old[line.lineNo - 1]}
+                      {/if}
+                    {:else}
+                      {line.line}
+                    {/if}
+                  </td>
+                  <td class="selection-indicator-right"></td>
+                </tr>
+              {/each}
             {/each}
-          {/each}
+          </tbody>
         </table>
       {:else if isImagePath(filePath) && extension && content}
         <div style:margin="1rem 0" style:text-align="center">

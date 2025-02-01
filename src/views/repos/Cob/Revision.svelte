@@ -102,6 +102,7 @@
     previousRevBase !== revisionBase
       ? revisionBase
       : (previousRevBase ?? revisionBase);
+  $: baseMismatch = previousRevBase !== revisionBase;
 
   onMount(async () => {
     try {
@@ -321,7 +322,6 @@
             items={previousRevOid && previousRevId
               ? [revisionBase, previousRevOid]
               : [revisionBase]}>
-            {@const baseMismatch = previousRevBase !== revisionBase}
             <Link
               let:item
               disabled={item !== revisionBase && baseMismatch}
@@ -439,7 +439,7 @@
           <div class="commits">
             {#each response.commits.toReversed() as commit}
               <div class="commit" style:position="relative">
-                <div class="commit-dot" />
+                <div class="commit-dot"></div>
                 <CobCommitTeaser {commit} {baseUrl} {repoId} />
               </div>
             {/each}
@@ -464,13 +464,13 @@
     {#if timelines.length > 0}
       {#each timelines as element}
         {#if element.type === "thread"}
-          <div class="connector" />
+          <div class="connector"></div>
           <Thread
             {baseUrl}
             thread={element.inner}
             rawPath={rawPath(revisionBase)} />
         {:else if element.type === "merge"}
-          <div class="connector" />
+          <div class="connector"></div>
           <div class="action merge">
             <div class="authorship-header">
               <div style:color="var(--color-fill-primary)">
@@ -496,7 +496,7 @@
           </div>
         {:else if element.type === "review"}
           {@const [author, review] = element.inner}
-          <div class="connector" />
+          <div class="connector"></div>
           <div
             class="action"
             class:comment-review={review.verdict === null}

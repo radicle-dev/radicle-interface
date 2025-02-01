@@ -35,7 +35,8 @@
       tabindex="0"
       class="overlay"
       on:click={hide}
-      style:cursor={$modalStore.disableHide ? "not-allowed" : "default"} />
+      style:cursor={$modalStore.disableHide ? "not-allowed" : "default"}>
+    </div>
     <div class="content">
       <svelte:component this={$modalStore.component} {...$modalStore.props} />
     </div>

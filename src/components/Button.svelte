@@ -1,4 +1,4 @@
-<script lang="ts" strictEvents>
+<script lang="ts">
   export let ariaLabel: string | undefined = undefined;
   export let title: string | undefined = undefined;
   export let variant:
