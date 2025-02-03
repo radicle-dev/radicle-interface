@@ -1,5 +1,7 @@
 name: check-visual
-on: push
+on:
+  push:
+  workflow_dispatch:
 
 jobs:
   generate-visual-diffs:

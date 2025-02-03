@@ -1,5 +1,7 @@
 name: check-http-client-unit-test
-on: push
+on:
+  push:
+  workflow_dispatch:
 
 jobs:
   check-http-client-unit-test:

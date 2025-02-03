@@ -1,5 +1,7 @@
 name: check-e2e
-on: push
+on:
+  push:
+  workflow_dispatch:
 
 jobs:
   check-e2e:

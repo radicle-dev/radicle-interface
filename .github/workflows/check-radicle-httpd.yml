@@ -1,5 +1,7 @@
 name: check-radicle-httpd
-on: push
+on:
+  push:
+  workflow_dispatch:
 
 jobs:
   test:

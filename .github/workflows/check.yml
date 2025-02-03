@@ -1,5 +1,7 @@
 name: check
-on: push
+on:
+  push:
+  workflow_dispatch:
 
 jobs:
   check:
