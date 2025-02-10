@@ -132,6 +132,12 @@
     align-items: center;
     white-space: nowrap;
   }
+
+  .rid {
+    font-family: var(--font-family-monospace);
+    margin-left: auto;
+    color: var(--color-foreground-emphasized);
+  }
 </style>
 
 <Link
@@ -189,10 +195,7 @@
             · Updated {formatTimestamp(commit.committer.time)}
           </span>
         {/await}
-        <span
-          title={repo.rid}
-          style:color="var(--color-foreground-emphasized)"
-          style:margin-left="auto">
+        <span class="rid" title={repo.rid}>
           {formatRepositoryId(repo.rid)}
         </span>
       </div>
