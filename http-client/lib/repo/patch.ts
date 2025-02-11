@@ -92,7 +92,7 @@ export const patchSchema = object({
   target: string(),
   labels: array(string()),
   merges: array(mergeSchema),
-  assignees: array(string()),
+  assignees: array(authorSchema),
   revisions: array(revisionSchema),
 });
 
