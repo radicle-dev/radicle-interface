@@ -14,6 +14,7 @@
   import ActivityDiagram from "@app/components/ActivityDiagram.svelte";
   import Badge from "@app/components/Badge.svelte";
   import Icon from "@app/components/Icon.svelte";
+  import Id from "@app/components/Id.svelte";
   import Link from "@app/components/Link.svelte";
 
   export let compact = false;
@@ -39,7 +40,6 @@
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    overflow: hidden;
   }
 
   .repo-card.compact {
@@ -132,12 +132,6 @@
     align-items: center;
     white-space: nowrap;
   }
-
-  .rid {
-    font-family: var(--font-family-monospace);
-    margin-left: auto;
-    color: var(--color-foreground-emphasized);
-  }
 </style>
 
 <Link
@@ -195,8 +189,12 @@
             · Updated {formatTimestamp(commit.committer.time)}
           </span>
         {/await}
-        <span class="rid" title={repo.rid}>
-          {formatRepositoryId(repo.rid)}
+        <span class="global-flex-item" style:margin-left="auto">
+          <Id id={repo.rid} title={repo.rid}>
+            <span style:font-size="var(--font-size-tiny)">
+              {formatRepositoryId(repo.rid)}
+            </span>
+          </Id>
         </span>
       </div>
     </div>
