@@ -1,4 +1,4 @@
-use radicle_surf as surf;
+use radicle_surf::{self as surf};
 use serde_json::{json, Value};
 
 use radicle::cob;
@@ -194,14 +194,14 @@ impl<'a> Modification<'a> {
             surf::diff::Modification::Addition(addition) => {
                 json!({
                     "type": "addition",
-                    "line": addition.line,
+                    "line": addition.line.clone().from_utf8().ok(),
                     "lineNo": addition.line_no
                 })
             }
             surf::diff::Modification::Deletion(deletion) => {
                 json!({
                     "type": "deletion",
-                    "line": deletion.line,
+                    "line": deletion.line.clone().from_utf8().ok(),
                     "lineNo": deletion.line_no
                 })
             }
@@ -212,7 +212,7 @@ impl<'a> Modification<'a> {
             } => {
                 json!({
                     "type": "context",
-                    "line": line,
+                    "line": line.clone().from_utf8().ok(),
                     "lineNoOld": line_no_old,
                     "lineNoNew": line_no_new
                 })

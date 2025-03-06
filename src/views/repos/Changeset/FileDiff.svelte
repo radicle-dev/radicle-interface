@@ -39,6 +39,9 @@
   let highlighting: { new?: string[]; old?: string[] } | undefined = undefined;
   let syntaxHighlightingLoading: boolean = false;
   let preview = false;
+  const binaryLines =
+    fileDiff.type === "plain" &&
+    fileDiff.hunks.some(h => h.lines.some(l => !l.line));
   $: extension = filePath.split(".").pop();
 
   onMount(() => {
@@ -449,7 +452,7 @@
   </svelte:fragment>
 
   <div class="container">
-    {#if fileDiff.type === "plain"}
+    {#if fileDiff.type === "plain" && !binaryLines}
       {#if fileDiff.hunks.length > 0 && !preview}
         <table class="diff" data-file-diff-select>
           <tbody>
