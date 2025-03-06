@@ -12,7 +12,7 @@ pub(crate) enum Comment<'a> {
     Issue(&'a cob::thread::Comment),
 }
 
-impl<'a> Comment<'a> {
+impl Comment<'_> {
     pub fn as_json(&self, id: &Oid, aliases: &impl AliasStore) -> Value {
         match self {
             Comment::Issue(c) => json!({

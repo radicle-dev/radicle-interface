@@ -66,7 +66,7 @@ export type CommitBlob = z.infer<typeof commitBlobSchema>;
 type AdditionHunkLine = z.infer<typeof additionHunkLineSchema>;
 
 const additionHunkLineSchema = object({
-  line: string(),
+  line: string().nullable(),
   lineNo: number(),
   type: literal("addition"),
 });
@@ -74,7 +74,7 @@ const additionHunkLineSchema = object({
 type DeletionHunkLine = z.infer<typeof deletionHunkLineSchema>;
 
 const deletionHunkLineSchema = object({
-  line: string(),
+  line: string().nullable(),
   lineNo: number(),
   type: literal("deletion"),
 });
@@ -95,7 +95,7 @@ const diffFileSchema = object({
 type ContextHunkLine = z.infer<typeof contextHunkLineSchema>;
 
 const contextHunkLineSchema = object({
-  line: string(),
+  line: string().nullable(),
   lineNoNew: number(),
   lineNoOld: number(),
   type: literal("context"),
