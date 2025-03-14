@@ -113,8 +113,8 @@ export type Range = z.infer<typeof rangeSchema>;
 export const codeLocationSchema = object({
   commit: string(),
   path: string(),
-  old: rangeSchema.nullable(),
-  new: rangeSchema.nullable(),
+  old: rangeSchema.optional(),
+  new: rangeSchema.optional(),
 });
 
 export type Author = z.infer<typeof authorSchema>;
