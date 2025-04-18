@@ -42,24 +42,54 @@ There are several ways to deploy the UI publicly. Here are two common options:
 1. Fork this repository to create your own version
 2. Configure your Vercel account to deploy the forked repository
 
+
 ## Configuration
 
-There's two ways to configure the UI:
+There are two ways to configure the UI: **at build time** and **at run time**.
 
-**Create a `local.json` config file**
+### Build-Time Configuration
 
-1. Copy [default.json][def] to a new file in the same folder called
+This method is recommended when deploying to static hosting platforms such
+as Vercel.
+
+#### Option 1: Create a `local.json` file
+
+1. Copy [`default.json`][def] to a new file in the same directory called
    `local.json`.
-2. Modify the properties in `local.json` to your preference.
+2. Modify the properties in `local.json` to suit your setup.
 
-**Environment variables**
+#### Option 2: Use environment variables
 
-1. Check [custom-environment-variables.json][env] for all available environment
-   variables.
-2. Set the desired environment variables when building the UI.
+1. Refer to [`custom-environment-variables.json`][env] for a list of supported
+   environment variables.
+2. Set the desired variables in your environment before building the UI.
 
-> For advanced configuration options, have a look at the [`node-config`][nco]
-> package.
+> For advanced configuration options, refer to the [`node-config`][nco]
+> documentation.
+
+
+### Run-Time Configuration
+
+This method is useful when the app is distributed as a precompiled static
+JS/HTML bundle, such as when installed via a package manager.
+
+You can build the app in a mode that loads configuration dynamically from the
+server it's deployed to, instead of bundling it at build time.
+
+To enable this behavior, set the environment variable `VITE_RUNTIME_CONFIG=true`
+during the build:
+
+```bash
+VITE_RUNTIME_CONFIG=true npm run build
+```
+
+This will inject a blocking script into the `index.html` that attempts to load
+the configuration from a pre-defined location (`/config.json`) on the server.
+
+The config file must be served as static content and must be publicly accessible.
+The structure of the runtime `config.json` must match the shape of the
+application's base configuration defined in `config/default.json`.
+
 
 ## Contributing
 

@@ -27,6 +27,32 @@ export default defineConfig({
       },
       compilerOptions: { dev: process.env.NODE_ENV !== "production" },
     }),
+    {
+      name: "inject-config-loader",
+      transformIndexHtml() {
+        if (process.env.VITE_RUNTIME_CONFIG === "true") {
+          return [
+            {
+              tag: "script",
+              attrs: {
+                type: "text/javascript",
+              },
+              children: `
+      try {
+        const xhr = new XMLHttpRequest();
+        xhr.open("GET", "/config.json", false);
+        xhr.send(null);
+        window.__CONFIG__ = JSON.parse(xhr.responseText);
+      } catch {
+        console.warn("Couldn't load config.json from the server, using built-in fallback config.");
+      }
+    `,
+              injectTo: "head-prepend",
+            },
+          ];
+        }
+      },
+    },
   ],
   server: {
     host: "localhost",

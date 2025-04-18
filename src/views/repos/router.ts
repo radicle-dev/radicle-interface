@@ -24,7 +24,7 @@ import type {
 } from "@http-client";
 
 import * as Syntax from "@app/lib/syntax";
-import config from "virtual:config";
+import config from "@app/lib/config";
 import { HttpdClient } from "@http-client";
 import { ResponseError, ResponseParseError } from "@http-client/lib/fetcher";
 import { cached } from "@app/lib/cache";

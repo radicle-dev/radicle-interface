@@ -4,7 +4,7 @@
   import isEqual from "lodash/isEqual";
   import some from "lodash/some";
 
-  import config from "virtual:config";
+  import config from "@app/lib/config";
   import { HttpdClient } from "@http-client";
   import {
     addBookmark,

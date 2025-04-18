@@ -1,5 +1,5 @@
 <script lang="ts">
-  import config from "virtual:config";
+  import config from "@app/lib/config";
 
   import Command from "@app/components/Command.svelte";
   import ExternalLink from "@app/components/ExternalLink.svelte";

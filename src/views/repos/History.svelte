@@ -9,7 +9,7 @@
   } from "@http-client";
   import type { RepoRoute } from "./router";
 
-  import config from "virtual:config";
+  import config from "@app/lib/config";
   import { HttpdClient } from "@http-client";
   import { baseUrlToString } from "@app/lib/utils";
   import { groupCommits } from "@app/lib/commit";

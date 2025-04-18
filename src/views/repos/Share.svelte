@@ -1,5 +1,5 @@
 <script lang="ts">
-  import config from "virtual:config";
+  import config from "@app/lib/config";
   import debounce from "lodash/debounce";
   import { toClipboard } from "@app/lib/utils";
 

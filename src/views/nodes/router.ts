@@ -1,7 +1,7 @@
 import type { BaseUrl, Node, NodeStats } from "@http-client";
 import type { ErrorRoute, NotFoundRoute } from "@app/lib/router/definitions";
 
-import config from "virtual:config";
+import config from "@app/lib/config";
 import { HttpdClient } from "@http-client";
 import { ResponseError, ResponseParseError } from "@http-client/lib/fetcher";
 import { baseUrlToString, isLocal } from "@app/lib/utils";

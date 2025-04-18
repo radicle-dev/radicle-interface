@@ -5,7 +5,7 @@ import { get, writable } from "svelte/store";
 
 import * as mutexExecutor from "@app/lib/mutexExecutor";
 import * as utils from "@app/lib/utils";
-import config from "virtual:config";
+import config from "@app/lib/config";
 import {
   repoRouteToPath,
   repoTitle,

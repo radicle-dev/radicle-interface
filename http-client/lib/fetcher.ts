@@ -3,7 +3,7 @@
 
 import type { ZodIssue, ZodType, TypeOf } from "zod";
 
-import config from "virtual:config";
+import config from "@app/lib/config";
 import { satisfies } from "compare-versions";
 
 export interface BaseUrl {

@@ -5,7 +5,7 @@ import storedWritable from "@app/lib/localStore";
 import { array, number, string, object } from "zod";
 import { get } from "svelte/store";
 
-import config from "virtual:config";
+import config from "@app/lib/config";
 
 const seedSchema = object({
   hostname: string(),

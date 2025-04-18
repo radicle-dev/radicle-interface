@@ -2,7 +2,7 @@ import type { BaseUrl, NodeIdentity, NodeStats } from "@http-client";
 import type { ErrorRoute, NotFoundRoute } from "@app/lib/router/definitions";
 
 import * as utils from "@app/lib/utils";
-import config from "virtual:config";
+import config from "@app/lib/config";
 import { HttpdClient } from "@http-client";
 import { ResponseError, ResponseParseError } from "@http-client/lib/fetcher";
 import { handleError } from "@app/views/nodes/error";
