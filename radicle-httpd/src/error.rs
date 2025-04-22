@@ -73,6 +73,14 @@ pub enum RawError {
     #[error(transparent)]
     Surf(#[from] radicle_surf::Error),
 
+    /// Io error.
+    #[error(transparent)]
+    Io(#[from] std::io::Error),
+
+    /// Archive error.
+    #[error("git archive error: {0}")]
+    Archive(String),
+
     /// Git error.
     #[error(transparent)]
     Git(#[from] radicle::git::ext::Error),

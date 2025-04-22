@@ -1,3 +1,4 @@
+use std::process::Command;
 use std::sync::Arc;
 
 use axum::extract::{Query, State};
@@ -8,10 +9,11 @@ use axum::Router;
 use hyper::HeaderMap;
 use radicle_surf::blob::{Blob, BlobRef};
 
+use radicle::git::Oid;
 use radicle::prelude::RepoId;
 use radicle::profile::Profile;
 use radicle::storage::{ReadRepository, ReadStorage};
-use radicle_surf::{Oid, Repository};
+use radicle_surf::Repository;
 
 use crate::api::query::RawQuery;
 use crate::axum_extra::Path;
@@ -95,6 +97,7 @@ pub fn router(profile: Arc<Profile>) -> Router {
     Router::new()
         .route("/:rid/:sha/*path", get(file_by_commit_handler))
         .route("/:rid/head/*path", get(file_by_canonical_head_handler))
+        .route("/archive/:rid/:sha", get(archive_by_commit_handler))
         .route("/:rid/blobs/:oid", get(file_by_oid_handler))
         .with_state(profile)
 }
@@ -115,6 +118,49 @@ async fn file_by_commit_handler(
     let blob = repo.blob(sha, &path)?;
 
     blob_response(blob, path)
+}
+
+async fn archive_by_commit_handler(
+    Path((rid, sha)): Path<(RepoId, Oid)>,
+    State(profile): State<Arc<Profile>>,
+) -> impl IntoResponse {
+    let storage = &profile.storage;
+    let repo = storage.repository(rid)?;
+    let repo_path = repo.path();
+
+    // Don't allow downloading tarballs for private repos.
+    if repo.identity_doc()?.visibility().is_private() {
+        return Err(Error::NotFound);
+    }
+
+    // SAFETY: Git command is available on the system, so we can safely unwrap.
+    let output = Command::new("git")
+        .arg("archive")
+        .arg("--format=tar.gz")
+        .arg(sha.to_string())
+        .current_dir(&repo_path)
+        .output()
+        .unwrap();
+
+    if !output.status.success() {
+        return Err(Error::Archive(
+            String::from_utf8_lossy(&output.stdout).to_string(),
+        ));
+    }
+
+    let mut response_headers = HeaderMap::new();
+    response_headers.insert(
+        "Content-Encoding",
+        HeaderValue::from_str("application/gzip")?,
+    );
+    response_headers.insert(
+        "Content-Disposition",
+        HeaderValue::from_str(&format!(
+            "attachment; filename*=UTF-8''{}.tar.gz",
+            sha.to_string()
+        ))?,
+    );
+    Ok::<_, Error>((StatusCode::OK, response_headers, output.stdout))
 }
 
 async fn file_by_canonical_head_handler(
