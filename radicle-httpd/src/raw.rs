@@ -1,3 +1,5 @@
+use std::process::Command;
+use std::str::FromStr;
 use std::sync::Arc;
 
 use axum::extract::{Query, State};
@@ -8,10 +10,11 @@ use axum::Router;
 use hyper::HeaderMap;
 use radicle_surf::blob::{Blob, BlobRef};
 
+use radicle::git::Oid;
 use radicle::prelude::RepoId;
 use radicle::profile::Profile;
 use radicle::storage::{ReadRepository, ReadStorage};
-use radicle_surf::{Oid, Repository};
+use radicle_surf::Repository;
 
 use crate::api::query::RawQuery;
 use crate::axum_extra::Path;
@@ -95,6 +98,7 @@ pub fn router(profile: Arc<Profile>) -> Router {
     Router::new()
         .route("/:rid/:sha/*path", get(file_by_commit_handler))
         .route("/:rid/head/*path", get(file_by_canonical_head_handler))
+        .route("/:rid/archive/*refspec", get(archive_by_refspec_handler))
         .route("/:rid/blobs/:oid", get(file_by_oid_handler))
         .with_state(profile)
 }
@@ -115,6 +119,68 @@ async fn file_by_commit_handler(
     let blob = repo.blob(sha, &path)?;
 
     blob_response(blob, path)
+}
+
+async fn archive_by_refspec_handler(
+    Path((rid, refspec)): Path<(RepoId, String)>,
+    State(profile): State<Arc<Profile>>,
+) -> impl IntoResponse {
+    let storage = &profile.storage;
+    let repo = storage.repository(rid)?;
+
+    // Don't allow downloading tarballs for private repos.
+    if repo.identity_doc()?.visibility().is_private() {
+        return Err(Error::NotFound);
+    }
+
+    let doc = repo.identity_doc()?;
+    let project = doc.project()?;
+    let repo_name = project.name();
+
+    // Remove possible .tar.gz suffix
+    let refspec = if refspec.ends_with(".tar.gz") {
+        refspec.trim_end_matches(".tar.gz")
+    } else {
+        &refspec
+    };
+
+    let oid = match Oid::from_str(&refspec) {
+        Ok(oid) => oid,
+        Err(_) => repo
+            .backend
+            .resolve_reference_from_short_name(&refspec)
+            .map(|reference| reference.target())?
+            .ok_or(Error::NotFound)?
+            .into(),
+    };
+
+    // SAFETY: Git command is available on the system, so we can safely unwrap.
+    let output = Command::new("git")
+        .arg("archive")
+        .arg("--format=tar.gz")
+        .arg(oid.to_string())
+        .current_dir(repo.path())
+        .output()?;
+
+    if !output.status.success() {
+        return Err(Error::Archive(format!(
+            "{}; code={}",
+            String::from_utf8_lossy(&output.stderr).trim(),
+            output.status.code().unwrap_or(0)
+        )));
+    }
+
+    let mut response_headers = HeaderMap::new();
+    response_headers.insert("Content-Type", HeaderValue::from_str("application/gzip")?);
+    response_headers.insert(
+        "Content-Disposition",
+        HeaderValue::from_str(&format!(
+            "attachment; filename={}-{}.tar.gz",
+            repo_name,
+            refspec.replace(|c: char| !c.is_ascii(), "_")
+        ))?,
+    );
+    Ok::<_, Error>((StatusCode::OK, response_headers, output.stdout))
 }
 
 async fn file_by_canonical_head_handler(
