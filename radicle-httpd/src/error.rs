@@ -86,8 +86,8 @@ pub enum RawError {
     Io(#[from] std::io::Error),
 
     /// Archive error.
-    #[error("git archive error: {0}")]
-    Archive(String),
+    #[error("`git archive` exited with status {0}:\n{1}")]
+    Archive(ExitStatus, String),
 
     /// Git error.
     #[error(transparent)]
