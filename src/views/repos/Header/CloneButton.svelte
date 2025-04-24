@@ -14,8 +14,10 @@
   export let baseUrl: BaseUrl;
   export let id: string;
   export let name: string;
+  export let currentRefname: string;
+  export let enabledArchiveDownload: boolean;
 
-  let radicle: boolean = true;
+  let activeTab: "radicle" | "git" | "archive" = "radicle";
 
   $: radCloneUrl = `rad clone ${id}`;
   $: portFragment =
@@ -23,6 +25,7 @@
     baseUrl.port === config.nodes.defaultHttpdPort
       ? ""
       : `:${baseUrl.port}`;
+  $: archiveUrl = `curl -OJ ${baseUrl.scheme}://${baseUrl.hostname}${portFragment}/raw/${id}/archive/${currentRefname}`;
   $: gitCloneUrl = `git clone ${baseUrl.scheme}://${
     baseUrl.hostname
   }${portFragment}/${parseRepositoryId(id)?.pubkey ?? id}.git ${name}`;
@@ -47,13 +50,13 @@
 
   <div slot="popover" style:width="24rem" class="popover">
     <div style:margin-bottom="1.5rem">
-      <Radio ariaLabel="Toggle render method">
+      <Radio ariaLabel="Toggle render method" styleGap="2px">
         <Button
           styleWidth="100%"
           styleBorderRadius="0"
-          variant={radicle ? "selected" : "not-selected"}
+          variant={activeTab === "radicle" ? "selected" : "not-selected"}
           on:click={() => {
-            radicle = true;
+            activeTab = "radicle";
           }}>
           <Icon name="logo" />
           Radicle
@@ -62,24 +65,37 @@
         <Button
           styleWidth="100%"
           styleBorderRadius="0"
-          variant={!radicle ? "selected" : "not-selected"}
+          variant={activeTab === "git" ? "selected" : "not-selected"}
           on:click={() => {
-            radicle = false;
+            activeTab = "git";
           }}>
           <Icon name="git" />
           Git
         </Button>
+        {#if enabledArchiveDownload}
+          <div class="global-spacer"></div>
+          <Button
+            styleWidth="100%"
+            styleBorderRadius="0"
+            variant={activeTab === "archive" ? "selected" : "not-selected"}
+            on:click={() => {
+              activeTab = "archive";
+            }}>
+            <Icon name="archive" />
+            Download
+          </Button>
+        {/if}
       </Radio>
     </div>
 
-    {#if radicle}
+    {#if activeTab === "radicle"}
       <label for="rad-clone-url">
         Use the <ExternalLink href="https://radicle.xyz">
           Radicle CLI
         </ExternalLink> to clone this repository.
       </label>
       <Command command={radCloneUrl} />
-    {:else}
+    {:else if activeTab === "git"}
       <div>
         <label for="git-clone-url">
           If you don't have Radicle installed, you can still clone the
@@ -89,6 +105,18 @@
         <div style:margin-top="1.5rem">
           Note that a Git clone does not include any of the social artifacts
           such as issues or patches.
+        </div>
+      </div>
+    {:else if activeTab === "archive"}
+      <div>
+        <label for="git-clone-url">
+          If you don't have Radicle installed, you can still download an archive
+          of the repository.
+        </label>
+        <Command command={archiveUrl} />
+        <div style:margin-top="1.5rem">
+          Note that a compressed archive of the source code does not include any
+          of the social artifacts such as issues or patches nor the git history.
         </div>
       </div>
     {/if}

@@ -11,7 +11,7 @@
 
   import config from "@app/lib/config";
   import { HttpdClient } from "@http-client";
-  import { baseUrlToString } from "@app/lib/utils";
+  import { baseUrlToString, formatQualifiedRefname } from "@app/lib/utils";
   import { groupCommits } from "@app/lib/commit";
 
   import Button from "@app/components/Button.svelte";
@@ -104,7 +104,14 @@
       Commits
     </Link>
   </svelte:fragment>
-  <RepoNameHeader {repo} {baseUrl} slot="header" />
+  <RepoNameHeader
+    {repo}
+    currentRefname={formatQualifiedRefname(
+      revision || repo.payloads["xyz.radicle.project"].data.defaultBranch,
+      peer,
+    )}
+    {baseUrl}
+    slot="header" />
 
   <div style:margin="1rem" slot="subheader">
     <Header

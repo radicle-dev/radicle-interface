@@ -20,6 +20,7 @@
   import RepoNameHeader from "./Source/RepoNameHeader.svelte";
   import Separator from "./Separator.svelte";
   import TreeComponent from "./Source/Tree.svelte";
+  import { formatQualifiedRefname } from "@app/lib/utils";
 
   export let baseUrl: BaseUrl;
   export let blobResult: BlobResult;
@@ -130,7 +131,14 @@
       <FilePath filenameWithPath={path} />
     {/if}
   </svelte:fragment>
-  <RepoNameHeader {repo} {baseUrl} slot="header" />
+  <RepoNameHeader
+    {repo}
+    currentRefname={formatQualifiedRefname(
+      revision || repo.payloads["xyz.radicle.project"].data.defaultBranch,
+      peer,
+    )}
+    {baseUrl}
+    slot="header" />
 
   <div style:margin="1rem" slot="subheader">
     <Header

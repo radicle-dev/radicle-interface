@@ -3,7 +3,7 @@
 
   import dompurify from "dompurify";
   import { markdown } from "@app/lib/markdown";
-  import { twemoji } from "@app/lib/utils";
+  import { baseUrlToString, twemoji } from "@app/lib/utils";
 
   import Badge from "@app/components/Badge.svelte";
   import CloneButton from "@app/views/repos/Header/CloneButton.svelte";
@@ -15,6 +15,18 @@
 
   export let repo: Repo;
   export let baseUrl: BaseUrl;
+  export let currentRefname: string;
+
+  let enabledArchiveDownload = false;
+
+  void fetch(
+    `${baseUrlToString(baseUrl)}/raw/${repo.rid}/archive/${currentRefname}`,
+    {
+      method: "HEAD",
+    },
+  ).then(response => {
+    enabledArchiveDownload = response.ok;
+  });
 
   function render(content: string): string {
     return dompurify.sanitize(
@@ -89,7 +101,12 @@
         style:display="flex"
         style:gap="0.5rem"
         class="global-hide-on-mobile-down">
-        <CloneButton {baseUrl} id={repo.rid} name={project.data.name} />
+        <CloneButton
+          {enabledArchiveDownload}
+          {baseUrl}
+          {currentRefname}
+          id={repo.rid}
+          name={project.data.name} />
         <SeedButton seedCount={repo.seeding} repoId={repo.rid} />
       </div>
       <div

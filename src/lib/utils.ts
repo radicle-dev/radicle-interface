@@ -252,3 +252,10 @@ export function twemoji(
 export function formatObjectId(id: string): string {
   return id.substring(0, 7);
 }
+
+export function formatQualifiedRefname(
+  refname: string,
+  peer: string | undefined,
+): string {
+  return peer ? `refs/namespaces/${peer}/refs/heads/${refname}` : refname;
+}
