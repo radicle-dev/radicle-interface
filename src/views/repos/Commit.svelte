@@ -1,7 +1,7 @@
 <script lang="ts">
   import type { BaseUrl, Commit, Repo, SeedingPolicy } from "@http-client";
 
-  import { formatObjectId } from "@app/lib/utils";
+  import { baseUrlToString, formatObjectId } from "@app/lib/utils";
 
   import Button from "@app/components/Button.svelte";
   import Changeset from "@app/views/repos/Changeset.svelte";
@@ -19,6 +19,17 @@
   export let commit: Commit;
   export let repo: Repo;
   export let nodeAvatarUrl: string | undefined;
+
+  let enabledArchiveDownload = false;
+
+  void fetch(
+    `${baseUrlToString(baseUrl)}/raw/${repo.rid}/${commit.commit.id}.tar.gz`,
+    {
+      method: "HEAD",
+    },
+  ).then(response => {
+    enabledArchiveDownload = response.ok;
+  });
 
   $: header = commit.commit;
 </script>
@@ -88,6 +99,14 @@
                 <Icon name="chevron-left-right" />
               </Button>
             </Link>
+            {#if enabledArchiveDownload}
+              <a
+                href={`${baseUrlToString(baseUrl)}/raw/${repo.rid}/${commit.commit.id}.tar.gz`}>
+                <Button variant="outline">
+                  <Icon name="archive" />Download
+                </Button>
+              </a>
+            {/if}
             <Share />
           </div>
         </span>
