@@ -3,7 +3,7 @@
 
   import dompurify from "dompurify";
   import escape from "lodash/escape";
-  import { baseUrlToString, formatObjectId } from "@app/lib/utils";
+  import { baseUrlToString, formatObjectId, convertUrlsToExternalLinks } from "@app/lib/utils";
 
   import Button from "@app/components/Button.svelte";
   import Changeset from "@app/views/repos/Changeset.svelte";
@@ -34,14 +34,6 @@
   });
 
   $: header = commit.commit;
-
-  function convertUrlsToExternalLinks(text: string): string {
-    const urlRegex = /(https?:\/\/[^\s]+)/g;
-    return text.replace(
-      urlRegex,
-      '<radicle-external-link href="$1">$1</radicle-external-link>',
-    );
-  }
 </script>
 
 <style>

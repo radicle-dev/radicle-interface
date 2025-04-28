@@ -1,7 +1,7 @@
 <script lang="ts">
   import type { BaseUrl, CommitHeader } from "@http-client";
 
-  import { twemoji } from "@app/lib/utils";
+  import { twemoji, convertUrlsToExternalLinks } from "@app/lib/utils";
 
   import CompactCommitAuthorship from "@app/components/CompactCommitAuthorship.svelte";
   import ExpandButton from "@app/components/ExpandButton.svelte";
@@ -13,14 +13,6 @@
 
   import dompurify from "dompurify";
   import escape from "lodash/escape";
-
-  function convertUrlsToExternalLinks(text: string): string {
-    const urlRegex = /(https?:\/\/[^\s]+)/g;
-    return text.replace(
-      urlRegex,
-      '<radicle-external-link href="$1">$1</radicle-external-link>'
-    );
-  }
 
   export let baseUrl: BaseUrl;
   export let commit: CommitHeader;

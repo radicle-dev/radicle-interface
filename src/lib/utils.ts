@@ -259,3 +259,12 @@ export function formatQualifiedRefname(
 ): string {
   return peer ? `refs/namespaces/${peer}/refs/heads/${refname}` : refname;
 }
+
+// Converts plain URLs into <radicle-external-link> components
+export function convertUrlsToExternalLinks(text: string): string {
+  const urlRegex = /(https?:\/\/[^\s]+)/g;
+  return text.replace(
+    urlRegex,
+    '<radicle-external-link href="$1">$1</radicle-external-link>'
+  );
+}
