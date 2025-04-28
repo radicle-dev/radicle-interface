@@ -11,6 +11,17 @@
   import InlineTitle from "@app/views/repos/components/InlineTitle.svelte";
   import Link from "@app/components/Link.svelte";
 
+  import dompurify from "dompurify";
+  import escape from "lodash/escape";
+
+  function convertUrlsToExternalLinks(text: string): string {
+    const urlRegex = /(https?:\/\/[^\s]+)/g;
+    return text.replace(
+      urlRegex,
+      '<radicle-external-link href="$1">$1</radicle-external-link>'
+    );
+  }
+
   export let baseUrl: BaseUrl;
   export let commit: CommitHeader;
   export let repoId: string;
@@ -83,7 +94,9 @@
     </div>
     {#if commitMessageVisible}
       <div class="commit-message" style:margin="0.5rem 0">
-        <pre>{commit.description.trim()}</pre>
+        <pre>{@html dompurify.sanitize(
+            convertUrlsToExternalLinks(escape(commit.description.trim()))
+          )}</pre>
       </div>
     {/if}
     <div class="global-hide-on-small-desktop-up">
