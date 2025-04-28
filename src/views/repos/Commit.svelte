@@ -1,6 +1,8 @@
 <script lang="ts">
   import type { BaseUrl, Commit, Repo, SeedingPolicy } from "@http-client";
 
+  import dompurify from "dompurify";
+  import escape from "lodash/escape";
   import { baseUrlToString, formatObjectId } from "@app/lib/utils";
 
   import Button from "@app/components/Button.svelte";
@@ -32,6 +34,14 @@
   });
 
   $: header = commit.commit;
+
+  function convertUrlsToExternalLinks(text: string): string {
+    const urlRegex = /(https?:\/\/[^\s]+)/g;
+    return text.replace(
+      urlRegex,
+      '<radicle-external-link href="$1">$1</radicle-external-link>',
+    );
+  }
 </script>
 
 <style>
@@ -115,7 +125,9 @@
         </CommitAuthorship>
       </div>
       {#if header.description}
-        <pre class="description txt-small">{header.description}</pre>
+        <pre class="description txt-small">{@html dompurify.sanitize(
+            convertUrlsToExternalLinks(escape(header.description)),
+          )}</pre>
       {/if}
     </div>
     <Changeset

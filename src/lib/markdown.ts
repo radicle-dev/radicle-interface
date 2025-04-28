@@ -50,6 +50,7 @@ dompurify.setConfig({
     "ol",
     "p",
     "pre",
+    "radicle-external-link",
     "table",
     "tbody",
     "td",
