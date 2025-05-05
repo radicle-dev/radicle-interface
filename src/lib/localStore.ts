@@ -92,7 +92,7 @@ export default function storedWritable<
    */
   function clear() {
     w.set(initialValue);
-    localStorage.removeItem(key);
+    if (!disableLocalStorage) localStorage.removeItem(key);
   }
 
   return {

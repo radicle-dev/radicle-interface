@@ -7,7 +7,7 @@ type Theme = z.infer<typeof themeSchema>;
 export const followSystemTheme = storedWritable<boolean | undefined>(
   "followSystemTheme",
   boolean(),
-  !localStorage.getItem("theme"),
+  !localStorage?.getItem("theme"),
   !window.localStorage,
 );
 export const theme = storedWritable<Theme>(
