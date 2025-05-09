@@ -129,6 +129,7 @@ export default [
     },
     rules: {
       "svelte/no-at-html-tags": "off",
+      "svelte/require-each-key": "off",
       "@typescript-eslint/no-explicit-any": "error",
     },
   },

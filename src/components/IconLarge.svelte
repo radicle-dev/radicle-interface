@@ -29,7 +29,7 @@
   height="48"
   width="48"
   fill="currentColor"
-  viewBox={"0 0 24 24"}>
+  viewBox="0 0 24 24">
   {#if name === "alert"}
     <path
       fill-rule="evenodd"

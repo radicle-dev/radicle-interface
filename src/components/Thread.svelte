@@ -47,7 +47,7 @@
       {baseUrl}
       {rawPath}
       id={root.id}
-      lastEdit={root.edits.length > 1 ? root.edits.pop() : undefined}
+      lastEdit={root.edits.length > 1 ? root.edits.at(-1) : undefined}
       authorId={root.author.id}
       authorAlias={root.author.alias}
       reactions={root.reactions}
@@ -62,7 +62,7 @@
         <CommentComponent
           {baseUrl}
           {rawPath}
-          lastEdit={reply.edits.length > 1 ? reply.edits.pop() : undefined}
+          lastEdit={reply.edits.length > 1 ? reply.edits.at(-1) : undefined}
           id={reply.id}
           authorId={reply.author.id}
           authorAlias={reply.author.alias}

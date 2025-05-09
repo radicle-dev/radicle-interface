@@ -81,6 +81,7 @@
   tabindex="0"
   class="folder"
   on:click={() => {
+    // eslint-disable-next-line
     expanded = !expanded;
   }}>
   <div class="icon-container" class:expanded>
