@@ -87,7 +87,6 @@
   }
 
   .title * {
-    line-clamp: 1;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -146,7 +145,7 @@
       <ActivityDiagram
         id={repo.rid}
         viewBoxHeight={200}
-        styleColor="var(--color-foreground-primary"
+        styleColor="var(--color-foreground-primary)"
         activity={repoInfo.activity} />
     </div>
     <div class="title">

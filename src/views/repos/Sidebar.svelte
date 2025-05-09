@@ -297,10 +297,7 @@
     <!-- Footer -->
     {#if !collapsedOnly}
       <div class="sidebar-footer" style:flex-direction="row">
-        <Button
-          title={"Collapse"}
-          on:click={toggleSidebar}
-          variant="background">
+        <Button title="Collapse" on:click={toggleSidebar} variant="background">
           <div class="icon" class:expanded>
             <Icon name="chevron-left" />
           </div>

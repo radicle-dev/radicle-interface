@@ -119,7 +119,7 @@
       slot="toggle"
       let:expanded
       let:toggle
-      styleBorderRadius={"var(--border-radius-tiny) 0 0 var(--border-radius-tiny)"}
+      styleBorderRadius="var(--border-radius-tiny) 0 0 var(--border-radius-tiny)"
       styleWidth="100%"
       on:click={toggle}
       title="Change branch"

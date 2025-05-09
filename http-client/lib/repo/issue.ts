@@ -1,5 +1,5 @@
-import type { ZodSchema, z } from "zod";
-import { array, literal, object, string, union } from "zod";
+import type { ZodSchema } from "zod";
+import * as z from "zod";
 
 import { commentSchema } from "./comment.js";
 import { authorSchema } from "../shared.js";
@@ -8,24 +8,24 @@ export type IssueState =
   | { status: "open" }
   | { status: "closed"; reason: "other" | "solved" };
 
-const issueStateSchema = union([
-  object({ status: literal("open") }),
-  object({
-    status: literal("closed"),
-    reason: union([literal("other"), literal("solved")]),
+const issueStateSchema = z.union([
+  z.object({ status: z.literal("open") }),
+  z.object({
+    status: z.literal("closed"),
+    reason: z.union([z.literal("other"), z.literal("solved")]),
   }),
 ]) satisfies ZodSchema<IssueState>;
 
-export const issueSchema = object({
-  id: string(),
+export const issueSchema = z.object({
+  id: z.string(),
   author: authorSchema,
-  title: string(),
+  title: z.string(),
   state: issueStateSchema,
-  discussion: array(commentSchema),
-  labels: array(string()),
-  assignees: array(authorSchema),
+  discussion: z.array(commentSchema),
+  labels: z.array(z.string()),
+  assignees: z.array(authorSchema),
 });
 
 export type Issue = z.infer<typeof issueSchema>;
 
-export const issuesSchema = array(issueSchema) satisfies ZodSchema<Issue[]>;
+export const issuesSchema = z.array(issueSchema) satisfies ZodSchema<Issue[]>;

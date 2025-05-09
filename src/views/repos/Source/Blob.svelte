@@ -159,6 +159,7 @@
             styleBorderRadius="0"
             variant={!preview ? "selected" : "not-selected"}
             on:click={() => {
+              // eslint-disable-next-line
               preview = false;
             }}>
             <Icon name="chevron-left-right" />Code
@@ -168,6 +169,7 @@
             variant={preview ? "selected" : "not-selected"}
             on:click={() => {
               window.location.hash = "";
+              // eslint-disable-next-line
               preview = true;
             }}>
             <Icon name="eye-open" />Preview

@@ -40,7 +40,7 @@ import type {
 import type { RequestOptions } from "./lib/fetcher.js";
 import type { ZodSchema } from "zod";
 
-import { z, array, literal, number, object, string, union } from "zod";
+import * as z from "zod";
 
 import * as repo from "./lib/repo.js";
 import { Fetcher } from "./lib/fetcher.js";
@@ -89,45 +89,45 @@ export type {
 
 export type Node = z.infer<typeof nodeSchema>;
 
-const nodeSchema = object({
-  id: string(),
-  agent: string(),
+const nodeSchema = z.object({
+  id: z.string(),
+  agent: z.string(),
   config: nodeConfigSchema.nullable(),
-  state: union([literal("running"), literal("stopped")]),
-  avatarUrl: string().optional(),
-  bannerUrl: string().optional(),
-  description: string().optional(),
+  state: z.union([z.literal("running"), z.literal("stopped")]),
+  avatarUrl: z.string().optional(),
+  bannerUrl: z.string().optional(),
+  description: z.string().optional(),
 });
 
 export type NodeIdentity = z.infer<typeof nodeIdentitySchema>;
 
-const nodeIdentitySchema = object({
-  alias: string().nullable(),
-  did: string(),
-  ssh: object({
-    full: string(),
-    hash: string(),
+const nodeIdentitySchema = z.object({
+  alias: z.string().nullable(),
+  did: z.string(),
+  ssh: z.object({
+    full: z.string(),
+    hash: z.string(),
   }),
 });
 
 export type NodeInfo = z.infer<typeof nodeInfoSchema>;
 
-const nodeInfoSchema = object({
-  message: string(),
-  service: string(),
-  version: string(),
-  apiVersion: string(),
-  nid: string(),
-  path: string(),
-  links: array(
-    object({
-      href: string(),
-      rel: string(),
-      type: union([
-        literal("GET"),
-        literal("POST"),
-        literal("PUT"),
-        literal("DELETE"),
+const nodeInfoSchema = z.object({
+  message: z.string(),
+  service: z.string(),
+  version: z.string(),
+  apiVersion: z.string(),
+  nid: z.string(),
+  path: z.string(),
+  links: z.array(
+    z.object({
+      href: z.string(),
+      rel: z.string(),
+      type: z.union([
+        z.literal("GET"),
+        z.literal("POST"),
+        z.literal("PUT"),
+        z.literal("DELETE"),
       ]),
     }),
   ),
@@ -135,12 +135,12 @@ const nodeInfoSchema = object({
 
 export type NodePolicies = z.infer<typeof nodePoliciesSchema>;
 
-const nodePoliciesSchema = object({
-  rid: string(),
-  policy: union([
-    object({ policy: literal("block") }),
-    object({
-      policy: literal("allow"),
+const nodePoliciesSchema = z.object({
+  rid: z.string(),
+  policy: z.union([
+    z.object({ policy: z.literal("block") }),
+    z.object({
+      policy: z.literal("allow"),
       scope: scopeSchema,
     }),
   ]),
@@ -150,8 +150,8 @@ export interface NodeStats {
   repos: { total: number };
 }
 
-const nodeStatsSchema = object({
-  repos: object({ total: number() }),
+const nodeStatsSchema = z.object({
+  repos: z.object({ total: z.number() }),
 }) satisfies ZodSchema<NodeStats>;
 
 export class HttpdClient {
@@ -211,7 +211,7 @@ export class HttpdClient {
         path: "node/policies/repos",
         options,
       },
-      array(nodePoliciesSchema),
+      z.array(nodePoliciesSchema),
     );
   }
 
@@ -264,7 +264,7 @@ export class HttpdClient {
         path: `nodes/${nid}/inventory`,
         options,
       },
-      array(string()),
+      z.array(z.string()),
     );
   }
 }

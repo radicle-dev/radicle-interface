@@ -2,15 +2,15 @@ import type { BaseUrl } from "@http-client";
 
 import isEqual from "lodash/isEqual";
 import storedWritable from "@app/lib/localStore";
-import { array, number, string, object } from "zod";
+import * as z from "zod";
 import { get } from "svelte/store";
 
 import config from "@app/lib/config";
 
-const seedSchema = object({
-  hostname: string(),
-  port: number(),
-  scheme: string(),
+const seedSchema = z.object({
+  hostname: z.string(),
+  port: z.number(),
+  scheme: z.string(),
 });
 
 // Seed that is opened on cold app start on the landing page.
@@ -24,7 +24,7 @@ export const selectedSeed = storedWritable<BaseUrl | undefined>(
 // A list of seeds that the user has explicitly bookmarked.
 export const bookmarkedSeeds = storedWritable<BaseUrl[]>(
   "bookmarkedSeeds",
-  array(seedSchema),
+  z.array(seedSchema),
   [],
   !window.localStorage,
 );

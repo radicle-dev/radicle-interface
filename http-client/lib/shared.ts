@@ -1,125 +1,125 @@
-import type { z } from "zod";
+import * as z from "zod";
 
-import { array, boolean, literal, number, object, string, union } from "zod";
+export const scopeSchema = z.union([z.literal("followed"), z.literal("all")]);
 
-export const scopeSchema = union([literal("followed"), literal("all")]);
-
-export const seedingPolicySchema = union([
-  object({
-    policy: literal("block"),
+export const seedingPolicySchema = z.union([
+  z.object({
+    policy: z.literal("block"),
   }),
-  object({
-    policy: literal("allow"),
+  z.object({
+    policy: z.literal("allow"),
     scope: scopeSchema,
   }),
 ]);
 
 export type SeedingPolicy = z.infer<typeof seedingPolicySchema>;
 
-const defaultSeedingPolicySchema = union([
-  object({
-    default: literal("block"),
+const defaultSeedingPolicySchema = z.union([
+  z.object({
+    default: z.literal("block"),
   }),
-  object({
-    default: literal("allow"),
+  z.object({
+    default: z.literal("allow"),
     scope: scopeSchema,
   }),
 ]);
 
-export const nodeConfigSchema = object({
-  alias: string(),
-  peers: union([
-    object({ type: literal("static") }),
-    object({ type: literal("dynamic") }),
+export const nodeConfigSchema = z.object({
+  alias: z.string(),
+  peers: z.union([
+    z.object({ type: z.literal("static") }),
+    z.object({ type: z.literal("dynamic") }),
   ]),
-  listen: array(string()),
-  connect: array(string()),
-  externalAddresses: array(string()),
-  proxy: string().optional(),
-  onion: union([
-    object({
-      mode: literal("proxy"),
-      address: string(),
-    }),
-    object({ mode: literal("forward") }),
-  ]).optional(),
-  log: union([
-    literal("ERROR"),
-    literal("WARN"),
-    literal("INFO"),
-    literal("DEBUG"),
-    literal("TRACE"),
+  listen: z.array(z.string()),
+  connect: z.array(z.string()),
+  externalAddresses: z.array(z.string()),
+  proxy: z.string().optional(),
+  onion: z
+    .union([
+      z.object({
+        mode: z.literal("proxy"),
+        address: z.string(),
+      }),
+      z.object({ mode: z.literal("forward") }),
+    ])
+    .optional(),
+  log: z.union([
+    z.literal("ERROR"),
+    z.literal("WARN"),
+    z.literal("INFO"),
+    z.literal("DEBUG"),
+    z.literal("TRACE"),
   ]),
-  network: union([literal("main"), literal("test")]),
-  relay: union([literal("always"), literal("never"), literal("auto")]),
-  limits: object({
-    routingMaxSize: number(),
-    routingMaxAge: number(),
-    fetchConcurrency: number(),
-    gossipMaxAge: number(),
-    maxOpenFiles: number(),
-    rate: object({
-      inbound: object({
-        fillRate: number(),
-        capacity: number(),
+  network: z.union([z.literal("main"), z.literal("test")]),
+  relay: z.union([z.literal("always"), z.literal("never"), z.literal("auto")]),
+  limits: z.object({
+    routingMaxSize: z.number(),
+    routingMaxAge: z.number(),
+    fetchConcurrency: z.number(),
+    gossipMaxAge: z.number(),
+    maxOpenFiles: z.number(),
+    rate: z.object({
+      inbound: z.object({
+        fillRate: z.number(),
+        capacity: z.number(),
       }),
-      outbound: object({
-        fillRate: number(),
-        capacity: number(),
+      outbound: z.object({
+        fillRate: z.number(),
+        capacity: z.number(),
       }),
     }),
-    connection: object({
-      inbound: number(),
-      outbound: number(),
+    connection: z.object({
+      inbound: z.number(),
+      outbound: z.number(),
     }),
   }),
-  workers: number(),
+  workers: z.number(),
   seedingPolicy: defaultSeedingPolicySchema,
 });
 
 export type DefaultSeedingPolicy = z.infer<typeof defaultSeedingPolicySchema>;
 
-export const configSchema = object({
-  publicExplorer: string(),
-  preferredSeeds: array(string()),
-  cli: object({ hints: boolean() }),
-  web: object({
-    pinned: object({
-      repositories: array(string()),
+export const configSchema = z.object({
+  publicExplorer: z.string(),
+  preferredSeeds: z.array(z.string()),
+  cli: z.object({ hints: z.boolean() }),
+  web: z.object({
+    pinned: z.object({
+      repositories: z.array(z.string()),
     }),
-    bannerUrl: string().optional(),
-    avatarUrl: string().optional(),
-    description: string().optional(),
+    bannerUrl: z.string().optional(),
+    avatarUrl: z.string().optional(),
+    description: z.string().optional(),
   }),
   node: nodeConfigSchema,
 });
 
 export type Config = z.infer<typeof configSchema>;
 
-export const rangeSchema = union([
-  object({
-    type: literal("lines"),
-    range: object({ start: number(), end: number() }),
+export const rangeSchema = z.union([
+  z.object({
+    type: z.literal("lines"),
+    range: z.object({ start: z.number(), end: z.number() }),
   }),
-  object({
-    type: literal("chars"),
-    line: number(),
-    range: object({ start: number(), end: number() }),
+  z.object({
+    type: z.literal("chars"),
+    line: z.number(),
+    range: z.object({ start: z.number(), end: z.number() }),
   }),
 ]);
 
 export type Range = z.infer<typeof rangeSchema>;
 
-export const codeLocationSchema = object({
-  commit: string(),
-  path: string(),
+export const codeLocationSchema = z.object({
+  commit: z.string(),
+  path: z.string(),
   old: rangeSchema.optional(),
   new: rangeSchema.optional(),
 });
 
 export type Author = z.infer<typeof authorSchema>;
 
-export const authorSchema = object({
-  id: string(),
-  alias: string().optional(),
+export const authorSchema = z.object({
+  id: z.string(),
+  alias: z.string().optional(),
 });

@@ -13,5 +13,5 @@
     style:font-family="var(--font-family-monospace)">
     {fromCommit.substring(0, 6)}..{toCommit.substring(0, 6)}
   </span>
-  <Icon name={"chevron-down"} />
+  <Icon name="chevron-down" />
 </Button>

@@ -1,27 +1,28 @@
-import type { z } from "zod";
-import { array, boolean, number, object, string } from "zod";
+import * as z from "zod";
 import { authorSchema, codeLocationSchema } from "../shared";
 
 export type Comment = z.infer<typeof commentSchema>;
 export type Embed = Comment["embeds"][0];
 export type Reaction = Comment["reactions"][0];
 
-export const commentSchema = object({
-  id: string(),
+export const commentSchema = z.object({
+  id: z.string(),
   author: authorSchema,
-  body: string(),
-  edits: array(
-    object({
+  body: z.string(),
+  edits: z.array(
+    z.object({
       author: authorSchema,
-      body: string(),
-      embeds: array(object({ name: string(), content: string() })),
-      timestamp: number(),
+      body: z.string(),
+      embeds: z.array(z.object({ name: z.string(), content: z.string() })),
+      timestamp: z.number(),
     }),
   ),
-  embeds: array(object({ name: string(), content: string() })),
-  reactions: array(object({ emoji: string(), authors: array(authorSchema) })),
-  timestamp: number(),
+  embeds: z.array(z.object({ name: z.string(), content: z.string() })),
+  reactions: z.array(
+    z.object({ emoji: z.string(), authors: z.array(authorSchema) }),
+  ),
+  timestamp: z.number(),
   location: codeLocationSchema.nullable().optional(),
-  resolved: boolean(),
-  replyTo: string().nullable(),
+  resolved: z.boolean(),
+  replyTo: z.string().nullable(),
 });

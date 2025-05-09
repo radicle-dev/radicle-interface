@@ -64,7 +64,9 @@
   $: if (visible) {
     syntaxHighlightingLoading = true;
     void highlightContent().then(output => {
+      // eslint-disable-next-line
       highlighting = output;
+      // eslint-disable-next-line
       syntaxHighlightingLoading = false;
     });
   }
