@@ -12,7 +12,7 @@ jobs:
         working-directory: ./radicle-httpd
     steps:
       - uses: actions/checkout@v4
-      - uses: dtolnay/rust-toolchain@stable
+      - uses: dtolnay/rust-toolchain@1.87
       - uses: Swatinem/rust-cache@v2
         with:
           workspaces: radicle-httpd -> target
@@ -30,7 +30,7 @@ jobs:
         working-directory: ./radicle-httpd
     steps:
       - uses: actions/checkout@v4
-      - uses: dtolnay/rust-toolchain@stable
+      - uses: dtolnay/rust-toolchain@1.87
       - uses: Swatinem/rust-cache@v2
         with:
           workspaces: radicle-httpd -> target
@@ -46,7 +46,9 @@ jobs:
         working-directory: ./radicle-httpd
     steps:
       - uses: actions/checkout@v4
-      - uses: dtolnay/rust-toolchain@stable
+      - uses: dtolnay/rust-toolchain@1.87
+        with:
+          components: rustfmt, clippy
       - uses: Swatinem/rust-cache@v2
         with:
           workspaces: radicle-httpd -> target

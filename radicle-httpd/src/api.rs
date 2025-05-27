@@ -42,6 +42,7 @@ impl Context {
         }
     }
 
+    #[allow(clippy::result_large_err)]
     pub fn repo_info<R: ReadRepository + radicle::cob::Store>(
         &self,
         repo: &R,
@@ -98,6 +99,7 @@ impl Context {
     }
 
     /// Get a repository by RID, checking to make sure we're allowed to view it.
+    #[allow(clippy::result_large_err)]
     pub fn repo(&self, rid: RepoId) -> Result<(Repository, DocAt), error::Error> {
         let repo = self.profile.storage.repository(rid)?;
         let doc = repo.identity_doc()?;

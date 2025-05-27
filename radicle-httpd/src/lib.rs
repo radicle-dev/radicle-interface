@@ -42,7 +42,7 @@ mod test;
 mod tracing_extra;
 
 /// Default cache HTTP size.
-pub const DEFAULT_CACHE_SIZE: NonZeroUsize = unsafe { NonZeroUsize::new_unchecked(100) };
+pub const DEFAULT_CACHE_SIZE: NonZeroUsize = NonZeroUsize::new(100).unwrap();
 
 #[derive(Debug, Clone)]
 pub struct Options {
