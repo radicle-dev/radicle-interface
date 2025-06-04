@@ -106,6 +106,10 @@ async fn git_http_backend(
     let mut cmd = Command::new("git");
     let mut child = cmd
         .arg("http-backend")
+        // This is a workaround to allow fetching particular commits by their OID.
+        // Otherwise, the client errors with "Server does not allow request for unadvertised object"
+        // See also `REF_UNADVERTISED_NOT_ALLOWED` in Git's `fetch-pack.c` (as of 0bd2d79).
+        .args(["-c", "uploadpack.allowAnySHA1InWant"])
         .env("REQUEST_METHOD", method.as_str())
         .env("GIT_PROJECT_ROOT", git_dir)
         // "The GIT_HTTP_EXPORT_ALL environmental variable may be passed to git-http-backend to bypass
