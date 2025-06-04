@@ -12,11 +12,12 @@ use tower::ServiceExt;
 
 use radicle::cob::migrate;
 use radicle::cob::patch::MergeTarget;
+use radicle::crypto::signature::Signer;
 use radicle::crypto::ssh::Keystore;
-use radicle::crypto::test::signer::MockSigner;
-use radicle::crypto::{KeyPair, Seed, Signer};
+use radicle::crypto::{KeyPair, Seed, Signature};
 use radicle::git::{raw as git2, RefString};
 use radicle::identity::{project, Visibility};
+use radicle::node::device::Device;
 use radicle::node::{Features, Timestamp, UserAgent};
 use radicle::profile::{env, Home};
 use radicle::storage::ReadStorage;
@@ -85,14 +86,18 @@ pub fn profile(home: &Path, seed: [u8; 32]) -> radicle::Profile {
 pub fn seed(dir: &Path) -> Context {
     let home = dir.join("radicle");
     let profile = profile(home.as_path(), [0xff; 32]);
-    let signer = Box::new(MockSigner::from_seed([0xff; 32]));
+    let signer = Device::mock_from_seed([0xff; 32]);
 
     crate::logger::init().ok();
 
     seed_with_signer(dir, profile, &signer)
 }
 
-fn seed_with_signer<G: Signer>(dir: &Path, profile: radicle::Profile, signer: &G) -> Context {
+fn seed_with_signer<G: Signer<Signature>>(
+    dir: &Path,
+    profile: radicle::Profile,
+    signer: &Device<G>,
+) -> Context {
     const DEFAULT_BRANCH: &str = "master";
 
     crate::logger::init().ok();

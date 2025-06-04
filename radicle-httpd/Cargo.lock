@@ -356,6 +356,15 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "8318a53db07bb3f8dca91a600466bdb3f2eaadeedfdbcf02e1accbad9271ba50"
 
 [[package]]
+name = "bytesize"
+version = "2.0.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "a3c8f83209414aacf0eeae3cf730b18d6981697fba62f200fcfb92b9f082acba"
+dependencies = [
+ "serde",
+]
+
+[[package]]
 name = "cbc"
 version = "0.1.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1601,12 +1610,13 @@ dependencies = [
 
 [[package]]
 name = "radicle"
-version = "0.14.0"
+version = "0.15.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "fd823aeed3ffe73eb82a213e62cb3811f9bdf453844d6e0b14684e0757fb389b"
+checksum = "0fbbbde9fb67cc5264a38ba0f106b55892a1aeb8c8ca9023ec36a6b7e0442700"
 dependencies = [
  "amplify",
  "base64 0.21.7",
+ "bytesize",
  "crossbeam-channel",
  "cyphernet",
  "fastrand",
@@ -1617,6 +1627,7 @@ dependencies = [
  "multibase",
  "nonempty",
  "once_cell",
+ "qcheck",
  "radicle-cob",
  "radicle-crypto",
  "radicle-git-ext",
@@ -1632,9 +1643,9 @@ dependencies = [
 
 [[package]]
 name = "radicle-cob"
-version = "0.13.0"
+version = "0.14.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "90581a9508ccc310998e991d7acf139d2991297d3fb37d30de07536e10256afb"
+checksum = "6e9c90efa7a3febd01d33ed2e72cb12296c971ce03efa243d11c01520fcc1be8"
 dependencies = [
  "fastrand",
  "git2",
@@ -1646,14 +1657,15 @@ dependencies = [
  "radicle-git-ext",
  "serde",
  "serde_json",
+ "signature 2.2.0",
  "thiserror",
 ]
 
 [[package]]
 name = "radicle-crypto"
-version = "0.11.0"
+version = "0.12.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "d1d6a67969719841ad06049597006368eb4238ca63a02d20207654dfd1d2d6ad"
+checksum = "d16d9e1403a6c3073dce14f3ed893f430bb67d7af6a07cc7fe4b81907025ba22"
 dependencies = [
  "amplify",
  "cyphernet",
@@ -1664,6 +1676,7 @@ dependencies = [
  "radicle-git-ext",
  "radicle-ssh",
  "serde",
+ "signature 2.2.0",
  "sqlite",
  "ssh-key",
  "thiserror",
@@ -1774,9 +1787,9 @@ dependencies = [
 
 [[package]]
 name = "radicle-term"
-version = "0.11.0"
+version = "0.12.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "d2cf3256980e3fddcd135f6e755022df8b385b842cdcbbfce059f47e87caec18"
+checksum = "829c1f1d97d2d0f0d8738c8050c4821a74b59bf9d034d9b6aae55b19372236de"
 dependencies = [
  "anstyle-query",
  "anyhow",

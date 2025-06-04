@@ -10,6 +10,7 @@ use radicle::identity::doc::PayloadId;
 use radicle::identity::{DocAt, RepoId};
 use radicle::issue::cache::Issues as _;
 use radicle::node::routing::Store;
+use radicle::node::NodeId;
 use radicle::patch::cache::Patches as _;
 use radicle::storage::git::Repository;
 use radicle::storage::{ReadRepository, ReadStorage};
@@ -43,7 +44,7 @@ impl Context {
     }
 
     #[allow(clippy::result_large_err)]
-    pub fn repo_info<R: ReadRepository + radicle::cob::Store>(
+    pub fn repo_info<R: ReadRepository + radicle::cob::Store<Namespace = NodeId>>(
         &self,
         repo: &R,
         doc: DocAt,
