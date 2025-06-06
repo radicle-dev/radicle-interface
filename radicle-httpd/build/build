@@ -34,6 +34,7 @@ main() {
   keypath="$(rad path)/keys/radicle.pub"
   version="$(build/version)"
   image=radicle-build-$version
+  rust_version="$(cat ./rust-toolchain)"
 
   if [ ! -f "$keypath" ]; then
     echo "fatal: no key found at $keypath" >&2
@@ -51,6 +52,7 @@ main() {
   case "$OS" in
   Darwin)
     podman build \
+      --build-arg "RUST_VERSION=$rust_version" \
       --build-arg SOURCE_DATE_EPOCH \
       --build-arg TZ \
       --build-arg LC_ALL \
@@ -63,6 +65,7 @@ main() {
     ;;
   *)
     podman --cgroup-manager=cgroupfs build \
+      --build-arg "RUST_VERSION=$rust_version" \
       --build-arg SOURCE_DATE_EPOCH \
       --build-arg TZ \
       --build-arg LC_ALL \
