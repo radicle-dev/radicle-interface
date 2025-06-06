@@ -28,7 +28,7 @@ RUN rustup target add \
 # Install dependencies for cross-compiling to macOS.
 # We use Zig as the linker to perform the compilation from a Linux host.
 # Compilation is done via `cargo-zigbuild` which is a wrapper around `zig`.
-RUN cargo install cargo-zigbuild@0.19.3 --locked
+RUN cargo install cargo-zigbuild@0.20.0 --locked
 
 
 # Parts of the macOS SDK are required to build Radicle, we make these available
@@ -43,7 +43,7 @@ RUN cargo zigbuild --locked --release \
     --target=aarch64-apple-darwin \
     --target=aarch64-unknown-linux-musl \
     --target=x86_64-unknown-linux-musl \
-    -p radicle-httpd 
+    -p radicle-httpd
 
 # Now copy the files to a new image without all the intermediary artifacts to
 # save some space.
